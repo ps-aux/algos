@@ -56,7 +56,13 @@ public class Node {
 
     @Override
     public String toString() {
-        return "(" + data + ", " + next + ")";
+        String str;
+        try {
+            str = "(" + data + ", " + next + ")";
+        } catch (StackOverflowError err) {
+            return "[loop]";
+        }
+        return str;
     }
 
 }
