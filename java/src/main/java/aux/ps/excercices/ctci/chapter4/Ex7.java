@@ -68,27 +68,27 @@ interface BuildOderSpec {
 }
 
 
-class Node {
-
-    public int id;
-    public List<Node> in = new ArrayList<>();
-    public List<Node> to = new ArrayList<>();
-
-    public Node(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Node{" +
-                "id=" + id +
-                ", in=" + in.size() +
-                ", to=" + to.size() +
-                '}';
-    }
-}
-
 class BuildOderImpl implements BuildOderSpec {
+
+    private static class Node {
+
+        public int id;
+        public List<Node> in = new ArrayList<>();
+        public List<Node> to = new ArrayList<>();
+
+        public Node(int id) {
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "id=" + id +
+                    ", in=" + in.size() +
+                    ", to=" + to.size() +
+                    '}';
+        }
+    }
 
     @Override
     public List<Integer> buildOrder(int[] projects, List<Pair<Integer, Integer>> dependencies) {
