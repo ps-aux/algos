@@ -40,8 +40,21 @@ public class Matrix {
         data[y(y)][x(x)] = v;
     }
 
+    public void insert(Coords c, int v) {
+        insert(c.x, c.y, v);
+    }
+
+
     public int get(int x, int y) {
         return data[y(y)][x(x)];
+    }
+
+    public int get(Coords c) {
+        return get(c.x, c.y);
+    }
+
+    public int[][] getData() {
+        return data;
     }
 
     public Stream<Point> points() {

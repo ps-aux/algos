@@ -14,6 +14,7 @@ interface RotateStringSpec {
             "erbottlewat,waterbottle",
             "abcde,deabc",
             "a,a",
+            "'',''"
     })
     default void is(String a, String b) {
         assertThat(isRotationOf(a, b)).isTrue();
@@ -37,6 +38,9 @@ class RotateStringImpl implements RotateStringSpec {
     public boolean isRotationOf(String a, String b) {
         if (a.length() != b.length())
             return false;
+
+        if (a.isEmpty())
+            return true;
 
         var l = a.length();
 
@@ -66,4 +70,30 @@ class RotateStringImpl implements RotateStringSpec {
         return false;
     }
 }
+
+
+class RotateStringImpl2 implements RotateStringSpec {
+
+    /**
+     * for every string with len > 0
+     * s = ab where a,b are some substrings
+     * <p>
+     * rotation of s  rs is then
+     * rs = ba
+     * <p>
+     * therefore
+     * <p>
+     * ss = abab and rs  must be in ss (because ba is in ss)
+     */
+    @Override
+    public boolean isRotationOf(String a, String b) {
+        if (a.length() != b.length())
+            return false;
+
+        return (b + b).contains(a);
+
+    }
+}
+
+
 
