@@ -8,8 +8,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-
 
 interface InsertionSpec {
 
@@ -40,23 +38,16 @@ interface InsertionSpec {
 
 }
 
-class InsertionsImpl {
+class InsertionsImpl implements InsertionSpec {
 
-    //    @Override
+    @Override
     public int insert(int n, int m, int i, int j) {
         var x = (-1 << j);
         var y = ~(-1 << i);
-        System.out.println(Integer.toBinaryString(x));
-        System.out.println(Integer.toBinaryString(y));
 
         var mask = x ^ y;
-        var mask2 = ~mask;
-        System.out.println(Integer.toBinaryString(mask));
-        System.out.println(Integer.toBinaryString(mask2));
 
-        var res = (n & mask) | (m ^ 5);
-        System.out.println(Integer.toBinaryString(res));
-        return 0;
+        return (n & mask) | (m << i);
     }
 
     public static void main(String[] args) {

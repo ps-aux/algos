@@ -8,8 +8,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-
 
 interface BinaryToStringSpec {
 
