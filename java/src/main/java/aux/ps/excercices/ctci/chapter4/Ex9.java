@@ -14,12 +14,12 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
 
-interface FirstCommonAncesterSpec {
+interface BstSequencesSpec {
 
 
-    Node firstCommonAncestor(Node a, Node b);
+    int[][] bstSequences(Node bst);
 
-    @ParameterizedTest(name = "projects are build in correct order")
+    @ParameterizedTest(name = "all bst sequences")
     @ArgumentsSource(Data.class)
     default void test(Node a, Node b, Node expected) {
 
@@ -30,28 +30,32 @@ interface FirstCommonAncesterSpec {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 
-            int[] t1 = {1, 2, 3, 4, 5, 6};
-            List<Pair<Integer, Integer>> t1Deps = List.of(
-                    new Pair<>(1, 4),
-                    new Pair<>(6, 2),
-                    new Pair<>(2, 4),
-                    new Pair<>(6, 1),
-                    new Pair<>(4, 3)
-            );
+            Node t1 = new Node(8);
+            t1.add(4);
+            t1.add(5);
+
+            t1.add(20);
+            t1.add(14);
+            t1.add(22);
+
+            int[][] t1Res = {
+                    {8, 4, 5, 20, 14, 22},
+                    {8, 4, 5, 20, 22, 14},
+                    {8, 20, 22, 14, 4, 5}
+            };
+
 
             return Stream.of(
-                    of(t1, t1Deps, true)
+                    of(t1, t1Res)
             );
         }
     }
 }
 
-class FcaImpl implements FirstCommonAncesterSpec {
+class BstSequencesImpl implements BstSequencesSpec {
 
     @Override
-    public Node firstCommonAncestor(Node a, Node b) {
-        return null;
+    public int[][] bstSequences(Node bst) {
+        return new int[0][];
     }
 }
-
-

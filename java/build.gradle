@@ -8,9 +8,16 @@
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'idea'
 
 ext.junitPlatformVersion = '1.0.2'
 ext.junitJupiterVersion = '5.0.2'
+
+idea {
+    module {
+        downloadJavadoc = true
+    }
+}
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -23,6 +30,8 @@ allprojects {
     sourceCompatibility = 10
     targetCompatibility = 10
 }
+
+
 
 dependencies {
 

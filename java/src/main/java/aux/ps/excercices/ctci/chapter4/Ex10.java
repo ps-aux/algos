@@ -1,28 +1,27 @@
 package aux.ps.excercices.ctci.chapter4;
 
 import aux.ps.excercices.ctci.chapter4.data.Bst.Node;
-import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.util.List;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
 
-interface BstSequencesSpec {
+interface CheckSubtreeSpec {
 
 
-    int[][] bstSequences(Node bst);
+    boolean isSubtree(Node t, Node of);
 
-    @ParameterizedTest(name = "projects are build in correct order")
+    @ParameterizedTest(name = "tree is a subtree of another")
     @ArgumentsSource(Data.class)
-    default void test(Node a, Node b, Node expected) {
-
+    default void test(Node t, Node of, boolean expected) {
+        assertThat(isSubtree(t, of)).isEqualTo(expected);
     }
 
     class Data implements ArgumentsProvider {
@@ -30,32 +29,36 @@ interface BstSequencesSpec {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 
-            Node t1 = new Node(8);
-            t1.add(4);
-            t1.add(5);
+            Node t1Of = new Node(8);
+            t1Of.add(4);
+            t1Of.add(5);
 
-            t1.add(20);
-            t1.add(14);
-            t1.add(22);
+            t1Of.add(20);
+            t1Of.add(14);
+            t1Of.add(22);
+            Node t1T = new Node(20);
+            t1T.add(14);
+            t1T.add(22);
+            boolean t1Res = true;
 
-            int[][] t1Res = {
-                    {8, 4, 5, 20, 14, 22},
-                    {8, 4, 5, 20, 22, 14},
-                    {8, 20, 22, 14, 4, 5}
-            };
+            Node t2Of = t1Of;
+            Node t2T = new Node(23);
+            t2T.add(14);
+            boolean t2Res = false;
 
 
             return Stream.of(
-                    of(t1, t1Res)
+                    of(t1T, t1Of, t1Res),
+                    of(t2T, t2Of, t2Res)
             );
         }
     }
 }
 
-class BstSequencesImpl implements  BstSequencesSpec {
+class CheckSubtreeImpl implements CheckSubtreeSpec {
 
     @Override
-    public int[][] bstSequences(Node bst) {
-        return new int[0][];
+    public boolean isSubtree(Node t, Node of) {
+        return false;
     }
 }

@@ -161,8 +161,7 @@ public class Bst {
 
         @Override
         public String toString() {
-            return val + "";
-//            return makeString();
+            return makeString();
         }
 
 
