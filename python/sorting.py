@@ -21,7 +21,7 @@ def create_int_list(size, min_val, max_val):
     while i < size:
         ran = random.randint(min_val, max_val)
         array.append(ran)
-        i = i+1
+        i = i + 1
     return array
 
 
@@ -36,7 +36,7 @@ def bubble_sort(array):
         swapped = False
 
         for i in range(len(array) - 1):
-            if array[i] > array[i+1]:
+            if array[i] > array[i + 1]:
                 # Swap them
                 swap(array, i, i + 1)
                 swapped = True
@@ -52,12 +52,12 @@ def insertion_sort(array):
         # Repeat until start of the array is hit or while there is still
         # a bigger element before the current one
         k = i
-        #Save value
+        # Save value
         val = array[i]
         while k > 0 and array[k - 1] > val:
-            array[k] = array[k-1] #Move the element on previous position to current position
+            array[k] = array[k - 1]  # Move the element on previous position to current position
             k = k - 1
-        array[k] = val #If nothing was moved we are just assigning val to index of val => no change
+        array[k] = val  # If nothing was moved we are just assigning val to index of val => no change
 
         print array
 
@@ -77,9 +77,9 @@ def selection_sort(array):
             swap(array, i, min_index)
 
 
-def gapped_insert_sort(array,gap):
+def gapped_insert_sort(array, gap):
 
-    for i in range(gap,len(array)):
+    for i in range(gap, len(array)):
         j = i
         val = array[j];
         while j >= gap and array[j - gap] > val:
@@ -94,13 +94,13 @@ def shell_sort(array):
     gap = len(array) / 2;
 
     while gap > 0:
-        print "Gap:",gap
+        print "Gap:", gap
         gapped_insert_sort(array, gap)
         gap /= 2
         print "--------", array
 
 def merge_sort(array, start, end):
-    #Excluding end
+    # Excluding end
     
     if end < start:
         raise ValueError("End " + str(end) + " is smaller than start " + str(start))
@@ -130,26 +130,51 @@ def merge_sort(array, start, end):
             i += 1
         k += 1
     
-    while i < split - start: #Copy all the left elements in the first half if there are any left
+    while i < split - start:  # Copy all the left elements in the first half if there are any left
         array[k] = first_half_cpy[i]
         i += 1
         k += 1
-    #If there are any elements left in the  second half they are already in place then
+    # If there are any elements left in the  second half they are already in place then
     
     print " ------ ", array
         
 
+def heap_sort(array):
+    pass
+    
+def heapify(array):
+    for i in range(0, len(array)):
+        sift_up(array, i)
+        
+def sift_up(array, index):
+    if index == 0:
+        return
+    parent = (index - 1) / 2
+    if (array[parent] >= array[index]):
+        #Everything in ordnung
+        return
+    #swap
+    array[parent], array[index] = array[index], array[parent]
+    #..and repeat the process
+    sift_up(array, parent)
+    
+    
+
+    
 
 def main():
     size = 30
     min_val = 0
     max_val = 10
     array = create_int_list(size, min_val, max_val)
-    print "Initial:",array
+    print "Initial:", array
     # bubble_sort(array)
 #     insertion_sort(array)
 #     selection_sort(array)
-    merge_sort(array, 0, len(array))
+#     merge_sort(array, 0, len(array))
+#     heap_sort(array)
+    
+    heapify(array)
 
     print " Sorted:", array
 
