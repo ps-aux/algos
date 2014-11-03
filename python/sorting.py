@@ -52,9 +52,12 @@ def insertion_sort(array):
         # Repeat until start of the array is hit or while there is still
         # a bigger element before the current one
         k = i
-        while k > 0 and array[k - 1] > array[k]:
-            swap(array, k, k - 1)
+        #Save value
+        val = array[i]
+        while k > 0 and array[k - 1] > val:
+            array[k] = array[k-1] #Move the element on previous position to current position
             k = k - 1
+        array[k] = val #If nothing was moved we are just assigning val to index of val => no change
 
         print array
 
@@ -73,18 +76,81 @@ def selection_sort(array):
         if (min_index != i):  # If minimum value other than on index i was found
             swap(array, i, min_index)
 
-        print array
+
+def gapped_insert_sort(array,gap):
+
+    for i in range(gap,len(array)):
+        j = i
+        val = array[j];
+        while j >= gap and array[j - gap] > val:
+            array[j] = array[j - gap]
+            j -= gap
+        array[j] = val
+        print "   --------", array
+        i += 1
+
+        
+def shell_sort(array):
+    gap = len(array) / 2;
+
+    while gap > 0:
+        print "Gap:",gap
+        gapped_insert_sort(array, gap)
+        gap /= 2
+        print "--------", array
+
+def merge_sort(array, start, end):
+    #Excluding end
+    
+    if end < start:
+        raise ValueError("End " + str(end) + " is smaller than start " + str(start))
+    llen = end - start
+    
+    
+    if llen == 1:
+        return
+    
+    split = start + llen / 2;
+    
+    merge_sort(array, start, split)
+    merge_sort(array, split, end)
+    
+    first_half_cpy = array[start:split]
+    
+    k = start
+    i = 0
+    j = split
+    
+    while i < (split - start) and j < end:
+        if (array[j] < first_half_cpy[i]):
+            array[k] = array[j]
+            j += 1
+        else:
+            array[k] = first_half_cpy[i]
+            i += 1
+        k += 1
+    
+    while i < split - start: #Copy all the left elements in the first half if there are any left
+        array[k] = first_half_cpy[i]
+        i += 1
+        k += 1
+    #If there are any elements left in the  second half they are already in place then
+    
+    print " ------ ", array
+        
 
 
 def main():
-    size = 20
+    size = 30
     min_val = 0
     max_val = 10
     array = create_int_list(size, min_val, max_val)
-    print array
+    print "Initial:",array
     # bubble_sort(array)
-    # insertion_sort(array)
-    selection_sort(array)
-    print array
+#     insertion_sort(array)
+#     selection_sort(array)
+    merge_sort(array, 0, len(array))
+
+    print " Sorted:", array
 
 main()
