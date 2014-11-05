@@ -1,4 +1,5 @@
 import math
+import random
 
 
 class Heap:
@@ -9,10 +10,10 @@ class Heap:
     
     def add(self, val):
         self.__list.append(val)
-        self.__upheap(len(self.__list) - 1)
+        self.__sift_up(len(self.__list) - 1)
 
     
-    def __upheap(self, index):
+    def __sift_up(self, index):
         """ Verify if the element at the given index is properly positioned.
            If not, make it flow upwards until it is at the correct position.
         """
@@ -31,17 +32,61 @@ class Heap:
             self.__list[parent] 
         
         # Call recursively on the new position (now containing the element not its parent)
-        self.__upheap(parent)
+        self.__sift_up(parent)
+    
+    def __sift_down(self, index):
+        if self.__is_leaf(index):
+            #We are at the lowest level
+            return
+        
+        array = self.__list
+
+        left = self.__get_left_child_index(index) #Left child index
+        assert left != -1
+        right = self.__get_right_child_index(index) #Right child index
+
+        if right == -1:
+            bigger = left #Index of the bigger child
+        else:
+            bigger = left if \
+                array[left] > array[right] \
+                else right
+        
+        if array[bigger] > array[index]:
+            #Is smaller than at least one child so swap with greater child
+            array[index], array[bigger] = array[bigger]. heap_array[index]
+            self.__sift_down[bigger] #Continue 
+        
+        
+
+    
+    def __is_leaf(self, index):
+        if index * 2 + 1 >= len(self.__list):
+            #Such node does not exist
+            return False
+        return True
 
     
     def __get_parent_index(self, index):
         return (index - 1) / 2;
     
     def __get_left_child_index(self, index):
-        return index * 2 + 1
+        child =  index * 2 + 1
+        if not self.__has_index(index):
+            child = -1
+        return child
 
     def __get_right_child_index(self, index):
-        return index * 2 + 2
+        child = index * 2 + 2
+        if not self.__has_index(index):
+            child = -1
+        return child
+    
+    def __has_index(self, index):
+        if index >= len(self.__list):
+            return False
+        return True
+
     
     def __str__(self):
         return "Heap:" + self.__list.__str__()
@@ -51,18 +96,20 @@ class Heap:
         levels = math.ceil(math.log(size, 2))
         levels = int(levels)
         return levels
-
+    
     class Row:
         
         space = None
-        space_str = "     "
+        space_str = "   "
 
-        def __init__(self):
+        def __init__(self, heap_array):
             self.list = []
+            self.heap_array = heap_array
             self.is_base = False
             self.is_top = False
             self.parent = None
             self.space_siblings = 1
+
 
         
         def __str__(self):
@@ -74,13 +121,17 @@ class Heap:
                 if e == None: 
                     second += Heap.Row.space_str
                 else:
-                    second += "|" + str(e).zfill(3) + "|"
+                    if e >= len(self.heap_array):
+                        s = " "
+                    else:
+                        s = str(self.heap_array[e])
+                    second +=  s.rjust(2)
             
             #Init top row with space strings
             #Top row is the row where /  \ will be shown
             top_row = [Heap.Row.space_str for i in range(0, len(self.list))]
             
-            if row.is_top:
+            if self.is_top:
                 #There will be no top row for the first level
                 return second;
 
@@ -98,8 +149,7 @@ class Heap:
             for s in top_row:
                 first += s
 
-#             return first + "\n" + second
-            return second
+            return first + "\n" + second
                 
      
     def build_row(self, level):
@@ -108,7 +158,7 @@ class Heap:
             raise ValueError("The level out of range. Max can be " + depth)
         
 
-        row = Heap.Row()
+        row = Heap.Row(self.__list)
         first = 2 ** level - 1  # List index of the first leaf in the base level
 
         if (level == depth - 1):
@@ -187,91 +237,10 @@ class Heap:
 
 h = Heap()
  
-h.add(4)
-h.add(5)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(4)
-h.add(5)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(4)
-h.add(5)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(4)
-h.add(5)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(4)
-h.add(5)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-
-h.add(20)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(4)
-h.add(5)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-h.add(4)
-h.add(5)
-h.add(9)
-h.add(7)
-h.add(0)
-h.add(7)
-h.add(3)
-h.add(20)
-
+for i in range(0,20):
+    n = random.randint(0,50)
+    h.add(n)
+print h
 
 row = h.build_row(0)
 while True:

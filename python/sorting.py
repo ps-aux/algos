@@ -140,26 +140,89 @@ def merge_sort(array, start, end):
         
 
 def heap_sort(array):
-    pass
+    heapify(array)
+    size = len(array)
+    last = size - 1
+    
+    while last > 0:
+        array[last], array[0] = array[0], array[last]
+        last -= 1
+        sift_down(array, 0, last)
+    
+    
     
 def heapify(array):
-    for i in range(0, len(array)):
-        sift_up(array, i)
-        
+    end = len(array) - 1  # Last index
+    i = (end - 1) / 2
+    while i > -1:
+        sift_down(array, i, end)
+        i -= 1
+
 def sift_up(array, index):
     if index == 0:
+        #It's the topmost node
         return
     parent = (index - 1) / 2
-    if (array[parent] >= array[index]):
-        #Everything in ordnung
-        return
-    #swap
-    array[parent], array[index] = array[index], array[parent]
-    #..and repeat the process
-    sift_up(array, parent)
     
+    # Invariant: If this is the right child, then left child val < parent val
+    
+    if (array[parent] >= array[index]):
+        # Everything in ordnung
+        return
+    # swap
+    array[parent], array[index] = array[index], array[parent]
+    # ..and repeat the process
+    sift_up(array, parent)
+
+def sift_down(array, index, end):
+    """ end is the last index of the array taken into account
+    """
+    child = index * 2 + 1  # Index of the child to be compared with the parent at 'index'
+    if child > end:
+        # The node at this index has no children
+        return
+    
+    if child != end and array[child + 1] > array[child]:
+        # If there is a right child and it is greater than the left child
+        # make it the child
+        child = child + 1
+    
+    if (array[child] > array[index]):
+        # The greater child is greater then parent
+        array[child], array[index] = array[index], array[child]
+        sift_down(array, child, end)
+
+
+    
+def test_heap(array):   
+    for i in range(0, len(array)):
+        left = i * 2 + 1  # Left child
+        right = i * 2 + 1  # Right child
+        
+        if left >= len(array):
+            continue
+
+        if array[left] > array[i]:
+            print ("child %d is greater than parent %d" % (left, i))
+            return
+
+        if right >= len(array):
+            continue
+        
+        if array[right] > array[i]:
+            print ("child %d is greater than parent %d" % (right, i))
+            return
+    
+    print "heap is ok"
+        
     
 
+def format_array(array):
+    s = ""
+    size = len(array)
+    for i in range(0, size):
+        s += "[%d] %d |" % (i, array[i])
+    return s
     
 
 def main():
@@ -167,14 +230,14 @@ def main():
     min_val = 0
     max_val = 10
     array = create_int_list(size, min_val, max_val)
+
     print "Initial:", array
-    # bubble_sort(array)
+
+#     bubble_sort(array)
 #     insertion_sort(array)
 #     selection_sort(array)
 #     merge_sort(array, 0, len(array))
-#     heap_sort(array)
-    
-    heapify(array)
+    heap_sort(array)
 
     print " Sorted:", array
 
