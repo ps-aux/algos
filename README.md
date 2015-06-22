@@ -1,6 +1,6 @@
-# algos
+# algos [WIP]
 
-Implementations of classic algorithms in various languages. So far: **Java**, **Pytho** and **Javascript**.
+Implementations of classic algorithms in various languages. So far: **Java**, **Python** and **Javascript**.
 
 A lot is to be done here since I would like to have visual representation of the algorithm execution.
 
