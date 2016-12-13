@@ -60,6 +60,9 @@ export default class ActionPlayer {
             this.model.forEach(el => el.examined = false)
             this.model[a.index].examined = true
         }
+        else if (a.type === 'put') {
+            this.model[a.index].val = a.val
+        }
         else
             throw 'Unknown action'
     }

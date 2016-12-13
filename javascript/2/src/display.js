@@ -26,8 +26,6 @@ export default class Display {
      */
 
     setArrayModel(model) {
-        assert(!this.array)
-
         this.array = model
         this.drawArray()
     }

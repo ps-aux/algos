@@ -13,6 +13,14 @@ export default class ArrayRecorder {
     }
 
     /** Standard array manipulation API */
+    put(index, val) {
+        this._result[index] = val
+        this.actions.push({
+            type: 'put',
+            index: index,
+            val: val
+        })
+    }
 
     get(index) {
         return this._result[index]

@@ -2,32 +2,57 @@ import assert from 'assert'
 import _ from 'lodash'
 import ActionPlayer from './actionPlayer'
 import Display from './display'
-import ArrayRecorder from './arrayRecorder'
-import {selectionSort} from  './sorting'
+import {selectionSort, insertionSort, bubbleSort, mergeSort, shuffle} from  './sorting'
 
 // Turn off debug
-const debug = true
+const debug = false
 if (!debug)
     console.debug = () => {
     }
 
 
-document.getElementById('play').onclick = start
+document.getElementById('selection-sort').onclick = () => sort('selection')
+document.getElementById('insertion-sort').onclick = () => sort('insertion')
+document.getElementById('bubble-sort').onclick = () => sort('bubble')
+document.getElementById('merge-sort').onclick = () => sort('merge')
+
+document.getElementById('randomize').onclick = randomize
+
+const speed = 10
 
 const orig = _.range(40, 0)
-const recorder = new ArrayRecorder(orig)
+// Build model from sorted (dev purposes)
+const model = orig.map(val => {
+    return {val: val}
+})
 
-selectionSort(recorder)
 
+// Show original array
 const display = new Display(document.getElementById('canvas'), 3)
-console.log('result is', recorder.result)
-const player = new ActionPlayer(recorder.result(), 100)
+display.setArrayModel(model)
 
-display.setArrayModel(player.getModel())
+const sorts = {
+    insertion: insertionSort,
+    bubble: bubbleSort,
+    selection: selectionSort,
+    merge: mergeSort
+}
 
 
-function start() {
-    console.log('starting')
+function sort(sort) {
+    var sortFunction = sorts[sort]
+
+    var result = sortFunction(orig)
+    const player = new ActionPlayer(result, speed)
+    display.setArrayModel(player.getModel())
+    player.play()
+}
+
+function randomize() {
+    console.log('randomizing', orig)
+    var result = shuffle(orig)
+    const player = new ActionPlayer(result, speed)
+    display.setArrayModel(player.getModel())
     player.play()
 }
 
