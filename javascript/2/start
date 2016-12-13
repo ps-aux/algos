@@ -1,0 +1,8 @@
+#!/usr/bin/node
+
+const p = require('child_process').exec('webpack-dev-server')
+
+p.stdout.on('data', data => console.log(data))
+p.stderr.on('data', data => console.log(data))
+
+
