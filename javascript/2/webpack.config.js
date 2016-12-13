@@ -4,6 +4,16 @@ module.exports = {
         path: __dirname,
         filename: "bundle.js"
     },
+
+    module: {
+        loaders: [
+        {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loaders: [ 'babel-loader']
+        }]
+    },
+
     devServer:{
         inline:true
     }
