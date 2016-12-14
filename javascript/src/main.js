@@ -20,7 +20,7 @@ document.getElementById('randomize').onclick = randomize
 
 const speed = 10
 
-const orig = _.range(40, 0)
+const orig = _.range(80, 0)
 // Build model from sorted (dev purposes)
 const model = orig.map(val => {
     return {val: val}
@@ -28,7 +28,7 @@ const model = orig.map(val => {
 
 
 // Show original array
-const display = new Display(document.getElementById('canvas'), 3)
+const display = new Display(document.getElementById('canvas'), 2)
 display.setArrayModel(model)
 
 const sorts = {
@@ -54,14 +54,5 @@ function randomize() {
     const player = new ActionPlayer(result, speed)
     display.setArrayModel(player.getModel())
     player.play()
-}
-
-
-function swap(array, a, b) {
-    console.debug('swapping', a, b)
-    assert(a !== b)
-    const tmp = array[b]
-    array[b] = array[a]
-    array[a] = tmp
 }
 

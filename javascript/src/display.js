@@ -6,8 +6,8 @@ export default class Display {
         this.canvas = canvas
         this.ctx = canvas.getContext('2d')
 
-        this.colWidth = 10
-        this.spacing = 5
+        this.colWidth = 5
+        this.spacing = 2
         this.color = '#C33632'
         this.selectedColor = '#5F5F5F'
         this.examinedColor = '#C0C0C0'
