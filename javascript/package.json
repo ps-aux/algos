@@ -2,7 +2,9 @@
   "name": "js-algs-2",
   "version": "1.0.0",
   "description": "",
-  "main": "start",
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
