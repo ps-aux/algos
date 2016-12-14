@@ -1,0 +1,23 @@
+//Setup boostrap
+// Overriding Boostrap default variables
+@import "bs/theme/_variables.scss";
+
+// Without this setting Sass cannot find fonts
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+
+@import "bs/theme/_bootswatch.scss";
+
+body {
+  padding-top:50px;
+}
+
+a.tile {
+  color: $headings-color;
+  text-decoration: none;
+
+  :hover {
+    color: $link-hover-color;
+  }
+}
+
