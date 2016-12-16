@@ -3,9 +3,9 @@ import assert from 'assert'
 
 export default class ActionPlayer {
 
-    constructor(record, delay = 500) {
+    constructor(record, speed) {
         this.record = record
-        this.delay = delay
+        this.delay = 1000 / speed
 
         // Setup model object
         this.model = record.initial.map(val=> {
@@ -24,11 +24,16 @@ export default class ActionPlayer {
         return this.model
     }
 
+    setSpeed(speed) {
+        this.delay = 1000 / speed
+    }
 
-    play() {
+
+    play(callback) {
         assert.ok(!this.playing, 'Already playing')
         this.playing = true
         this._playNext()
+        this.callback = callback
     }
 
     stop() {
@@ -43,6 +48,7 @@ export default class ActionPlayer {
 
         if (this.record.actions.length === 0) {
             console.debug('Playing done')
+            this.callback()
             this.playing = false
             return
         }

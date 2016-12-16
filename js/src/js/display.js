@@ -14,20 +14,20 @@ export default class Display {
         this.selectedColor = '#5F5F5F'
         this.examinedColor = '#C0C0C0'
 
-        
+
         window.onresize = e => {
             const width = container.offsetWidth
-            console.log('container width is ', container.offsetWidth)
             this.calculateWidths(width)
         }
     }
 
     calculateWidths(containerWidth) {
-        const maxSpace = containerWidth / this.elCount
-        this.scale = containerWidth > 500 ? 2 : 1.5
+        const width = containerWidth - 10 // minus padding
+        const maxSpace = width / this.elCount
+        this.scale = width > 500 ? 2 : 1.5
 
         this.canvas.height = this.scale * 100
-        this.canvas.width = containerWidth
+        this.canvas.width = width
 
         this.spacing = maxSpace > 7 ? 2 : 1
 

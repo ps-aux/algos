@@ -14,16 +14,30 @@ if (!debug)
     }
 
 
-document.getElementById('start').onclick = start
-document.getElementById('stop').onclick = stop
-document.getElementById('shuffle').onclick = doShuffle
+const startControl = document.getElementById('start')
+const stopControl = document.getElementById('stop')
+const resetControl = document.getElementById('reset')
+const shuffleControl = document.getElementById('shuffle')
+const speedControl = document.getElementById('speed-input')
 
-const speed = 10
+startControl.onclick = start
+stopControl.onclick = stop
+resetControl.onclick = reset
+shuffleControl.onclick = doShuffle
+const transformControls = [startControl, resetControl, shuffleControl]
+
+speedControl.oninput = e => {
+    speed = e.target.value
+    if (player) // In case we are playing
+        player.setSpeed(e.target.value)
+}
+
+var speed = speedControl.value
 const count = 80
 
-var array = _.range(count, 0)
+const origArray = _.range(count, 0)
 // Build simple model for the first display of the array
-var model = array.map(val => {
+var model = origArray.map(val => {
     return {val: val}
 })
 
@@ -46,31 +60,53 @@ function getArrayFromModel(model) {
 }
 
 function start() {
-    array = getArrayFromModel(model)
 
     const sort = document.querySelector('input[name=sort]:checked')
     const sortFunction = sorts[sort.value]
-    const result = sortFunction(array)
 
+    playTransformation(sortFunction)
+}
+
+
+function doShuffle() {
+    playTransformation(shuffle)
+}
+
+function playTransformation(transformation) {
+    transformControls.forEach(c => c.setAttribute('disabled', true))
+    const array = getArrayFromModel(model)
+    var result = transformation(array)
     doPlay(result)
 }
 
+function playingDone() {
+    transformControls.forEach(c => c.removeAttribute('disabled'))
+    player = null
+}
+
 function stop() {
-    console.log('stopping', player)
     if (player)
         player.stop()
+    playingDone()
+}
+
+function reset() {
+    model = createModel(origArray)
+    display.setArrayModel(model)
+}
+
+function createModel(array) {
+    return array.map(val => {
+        return {val: val}
+    })
 }
 
 function doPlay(result) {
     player = new ActionPlayer(result, speed)
     model = player.getModel()
     display.setArrayModel(model)
-    player.play()
+    player.play(playingDone)
 }
 
-function doShuffle() {
-    array = getArrayFromModel(model)
-    var result = shuffle(array)
-    doPlay(result)
-}
+
 

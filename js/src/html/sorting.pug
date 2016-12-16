@@ -5,22 +5,28 @@ block content
         .row
             h1 Sorting
         .row
-            .col-sm-12.col-md-10
+            .col-xs-12.col-md-10
                 .row
                     #sorting-canvas
                         canvas(height=200, width=400)
                             | Canvas, hell yeah !
                 .row
-                    .btn-toolbar(role='toolbar')
-                        a#start.btn.btn-primary.btn-sm
+                    .btn-group(role='group').col-xs-12.col-sm-7.col-md-5
+                        a#start.btn.btn-primary.btn-sm(title='Start animation')
                             span.glyphicon.glyphicon-play
                             | &nbsp Start
-                        a#stop.btn.btn-primary.btn-sm
+                        a#stop.btn.btn-primary.btn-sm(title='Stop animation')
                             span.glyphicon.glyphicon-stop
                             | &nbsp Stop
-                        a#shuffle.btn.btn-primary.btn-sm
+                        a#shuffle.btn.btn-primary.btn-sm(title='Shuffle elements')
                             span.glyphicon.glyphicon-align-right
                             | &nbsp Shuffle
+                        a#reset.btn.btn-primary.btn-sm(title='Reset the array')
+                            span.glyphicon.glyphicon-refresh
+                            | &nbsp Reset
+                    .col-xs-12.col-sm-5#speed
+                        label(for'speed-input') Speed
+                        input#speed-input(type='range' min='5' max='200' value=30 title='Set speed of animation')
 
         .row
             h3 Sorting algorithm
