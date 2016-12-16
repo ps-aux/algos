@@ -3,4 +3,4 @@ Algorithms with visualisation in browser in Javascript. Static web pages build w
 
 Checkout and run `npm install` and `npm start`.
 
-Deployed at https://ps-aux.github.io/js-algos/sorting.html
+Deployed at https://ps-aux.github.io/js-algos
