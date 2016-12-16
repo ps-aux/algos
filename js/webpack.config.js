@@ -47,7 +47,8 @@ const config = {
         // Output extracted CSS to a file
         new ExtractTextPlugin('style.css'),
         new HtmlWebpackPlugin({
-            template: '!!pug!src/html/index.pug'
+            template: '!!pug!src/html/index.pug',
+            excludeChunks: ['style.css']
         }),
         new HtmlWebpackPlugin({
             filename: 'sorting.html',

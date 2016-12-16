@@ -7,15 +7,17 @@ export default class Display {
         this.ctx = this.canvas.getContext('2d')
         this.elCount = elCount
 
+        console.log('container width is ', container.offsetWidth)
         this.calculateWidths(container.offsetWidth)
 
         this.color = '#C33632'
         this.selectedColor = '#5F5F5F'
         this.examinedColor = '#C0C0C0'
 
+        
         window.onresize = e => {
             const width = container.offsetWidth
-            console.log(width)
+            console.log('container width is ', container.offsetWidth)
             this.calculateWidths(width)
         }
     }

@@ -7,8 +7,6 @@ import ActionPlayer from './actionPlayer'
 import Display from './display'
 import {selectionSort, insertionSort, bubbleSort, mergeSort, shuffle} from  './sorting'
 
-console.log('jajajee')
-
 // Turn off debug
 const debug = false
 if (!debug)
