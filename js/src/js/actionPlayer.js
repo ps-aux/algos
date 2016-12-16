@@ -26,15 +26,24 @@ export default class ActionPlayer {
 
 
     play() {
-        assert.ok(!this.played, 'Already played')
-        this.played = true
+        assert.ok(!this.playing, 'Already playing')
+        this.playing = true
         this._playNext()
+    }
+
+    stop() {
+        console.debug('Stopping')
+        this.playing = false
     }
 
 
     _playNext() {
+        if (!this.playing)
+            return
+
         if (this.record.actions.length === 0) {
             console.debug('Playing done')
+            this.playing = false
             return
         }
 

@@ -7,7 +7,7 @@ import ArrayRecorder from './arrayRecorder'
  * @param a first index
  * @param b second index
  */
-function swap(array, a, b) {
+export function swap(array, a, b) {
     console.debug('swapping', a, b)
     assert(a !== b)
     const tmp = array[b]
@@ -16,9 +16,9 @@ function swap(array, a, b) {
 }
 
 /**
- * Knuth shuffle implementation of shuffle
+ * Knuth implementation of shuffle
  */
-function shuffle(nativeArray) {
+export function shuffle(nativeArray) {
     const array = new ArrayRecorder(nativeArray)
 
     for (let i = 0; i < array.size(); i++) {
@@ -36,7 +36,8 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function bubbleSort(nativeArray) {
+
+export function bubbleSort(nativeArray) {
     const array = new ArrayRecorder(nativeArray)
 
     for (let i = array.size(); i > 0; i--) {
@@ -53,7 +54,7 @@ function bubbleSort(nativeArray) {
     return array.result()
 }
 
-function selectionSort(nativeArray) {
+export function selectionSort(nativeArray) {
     const array = new ArrayRecorder(nativeArray)
 
     for (let i = 0; i < array.size(); i++) {
@@ -78,7 +79,7 @@ function selectionSort(nativeArray) {
     return array.result()
 }
 
-function insertionSort(nativeArray) {
+export function insertionSort(nativeArray) {
     const array = new ArrayRecorder(nativeArray)
 
     for (let i = 1; i < array.size(); i++) {
@@ -97,14 +98,13 @@ function insertionSort(nativeArray) {
     return array.result()
 }
 
-function mergeSort(nativeArray) {
+export function mergeSort(nativeArray) {
     const array = new ArrayRecorder(nativeArray)
     const auxArray = []
 
     sort(array, 0, array.size() - 1, auxArray)
 
     function sort(array, l, h, auxArray) {
-        console.log(l, h)
         if (h === l)
             return
         const m = l + Math.floor((h - l) / 2)
@@ -153,5 +153,15 @@ function mergeSort(nativeArray) {
     return array.result()
 }
 
+export function quickSort(nativeArray) {
+    const array = new ArrayRecorder(nativeArray)
 
-export {swap, selectionSort, insertionSort, bubbleSort, mergeSort, shuffle}
+    function partition(array) {
+        const pivot = array.get(0)
+
+
+    }
+
+    return array.result()
+}
+

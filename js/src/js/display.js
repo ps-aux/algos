@@ -2,17 +2,34 @@ import assert from 'assert'
 
 export default class Display {
 
-    constructor(canvas, scale = 1) {
-        this.canvas = canvas
-        this.ctx = canvas.getContext('2d')
+    constructor(container, elCount) {
+        this.canvas = container.querySelector('canvas')
+        this.ctx = this.canvas.getContext('2d')
+        this.elCount = elCount
 
-        this.colWidth = 5
-        this.spacing = 2
+        this.calculateWidths(container.offsetWidth)
+
         this.color = '#C33632'
         this.selectedColor = '#5F5F5F'
         this.examinedColor = '#C0C0C0'
-        this.scale = scale
 
+        window.onresize = e => {
+            const width = container.offsetWidth
+            console.log(width)
+            this.calculateWidths(width)
+        }
+    }
+
+    calculateWidths(containerWidth) {
+        const maxSpace = containerWidth / this.elCount
+        this.scale = containerWidth > 500 ? 2 : 1.5
+
+        this.canvas.height = this.scale * 100
+        this.canvas.width = containerWidth
+
+        this.spacing = maxSpace > 7 ? 2 : 1
+
+        this.colWidth = maxSpace - this.spacing
     }
 
     /**
@@ -29,7 +46,6 @@ export default class Display {
         this.array = model
         this.drawArray()
     }
-
 
     /**
      * =========== Private methods

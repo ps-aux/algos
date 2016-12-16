@@ -9,7 +9,7 @@ $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 @import "bs/theme/_bootswatch.scss";
 
 body {
-  padding-top:50px;
+  padding-top: 50px;
 }
 
 a.tile {
@@ -19,5 +19,9 @@ a.tile {
   :hover {
     color: $link-hover-color;
   }
+}
+
+#sorting-canvas {
+  padding: 0px;
 }
 

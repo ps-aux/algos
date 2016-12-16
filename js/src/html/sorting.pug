@@ -2,15 +2,41 @@ extends layout.pug
 
 block content
     .container
-        h1 Sorting algorithms
-        .canvas
-            canvas#canvas(width='600', height='200')
-                | Canvas, hell yeah !
-            hr
+        .row
+            h1 Sorting
+        .row
+            .col-sm-12.col-md-10
+                .row
+                    #sorting-canvas
+                        canvas(height=200, width=400)
+                            | Canvas, hell yeah !
+                .row
+                    .btn-toolbar(role='toolbar')
+                        a#start.btn.btn-primary.btn-sm
+                            span.glyphicon.glyphicon-play
+                            | &nbsp Start
+                        a#stop.btn.btn-primary.btn-sm
+                            span.glyphicon.glyphicon-stop
+                            | &nbsp Stop
+                        a#shuffle.btn.btn-primary.btn-sm
+                            span.glyphicon.glyphicon-align-right
+                            | &nbsp Shuffle
 
-            .btn-toolbar(role='toolbar')
-                each val in ['bubble', 'selection', 'insertion', 'merge']
-                    - var name= val.charAt(0).toUpperCase() + val.slice(1) + ' sort'
-                    button(id=val + '-sort').btn.btn-default.btn-sm= name
-            hr
-            button#randomize.btn.btn-primary Shuffle
+        .row
+            h3 Sorting algorithm
+            p From the slowest to the fastest
+            - var sorts =[
+            - {name:'bubble', upperBound:'n<sup>2</sup>'},
+            - {name:'selection', upperBound:'n<sup>2</sup>'},
+            - {name:'insertion', upperBound:'n<sup>2</sup>'},
+            - {name:'merge', upperBound:'n log n'}]
+
+            each sort in sorts
+                - var name= sort.name.charAt(0).toUpperCase() + sort.name.slice(1) + ' sort'
+                .radio
+                    label
+                        input(type='radio', name='sort', value=sort.name, checked='')
+                        |  !{name} &nbsp
+                        i O(!{sort.upperBound})
+
+
