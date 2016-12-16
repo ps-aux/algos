@@ -1,1 +1,4 @@
 
+Algorithms with visualisation in browser in Javascript. Static web pages build with `webpack`.
+
+Checkout and run `npm install` and `npm start`.
