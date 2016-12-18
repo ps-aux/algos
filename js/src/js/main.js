@@ -5,7 +5,7 @@ import assert from 'assert'
 import _ from 'lodash'
 import ActionPlayer from './actionPlayer'
 import Display from './display'
-import {selectionSort, insertionSort, bubbleSort, mergeSort, shuffle} from  './sorting'
+import * as algs from  './sorting'
 
 // Turn off debug
 const debug = false
@@ -23,7 +23,7 @@ const speedControl = document.getElementById('speed-input')
 startControl.onclick = start
 stopControl.onclick = stop
 resetControl.onclick = reset
-shuffleControl.onclick = doShuffle
+shuffleControl.onclick = shuffle
 const transformControls = [startControl, resetControl, shuffleControl]
 
 speedControl.oninput = e => {
@@ -47,10 +47,11 @@ const display = new Display(document.getElementById('sorting-canvas'),
 display.setArrayModel(model)
 
 const sorts = {
-    insertion: insertionSort,
-    bubble: bubbleSort,
-    selection: selectionSort,
-    merge: mergeSort
+    insertion: algs.insertionSort,
+    bubble: algs.bubbleSort,
+    selection: algs.selectionSort,
+    merge: algs.mergeSort,
+    quick: algs.quickSort
 }
 
 var player = null
@@ -68,8 +69,8 @@ function start() {
 }
 
 
-function doShuffle() {
-    playTransformation(shuffle)
+function shuffle() {
+    playTransformation(algs.shuffle)
 }
 
 function playTransformation(transformation) {

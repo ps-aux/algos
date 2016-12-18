@@ -6,6 +6,7 @@ export default class ArrayRecorder {
      * @param array native array
      */
     constructor(array) {
+        // The real array used in the recording pass
         this._result = array
         // make copy of array
         this.initial = array.slice(0)
@@ -14,6 +15,7 @@ export default class ArrayRecorder {
 
     /** Standard array manipulation API */
     put(index, val) {
+        this._validateIndex(index)
         this._result[index] = val
         this.actions.push({
             type: 'put',
@@ -23,7 +25,13 @@ export default class ArrayRecorder {
     }
 
     get(index) {
+        this._validateIndex(index)
         return this._result[index]
+    }
+
+    _validateIndex(index) {
+        if (index > this.size() - 1)
+            throw 'Index out of bound ' + index
     }
 
     size() {
@@ -31,6 +39,9 @@ export default class ArrayRecorder {
     }
 
     swap(a, b) {
+        this._validateIndex(a)
+        this._validateIndex(a)
+
         swap(this._result, a, b)
         this.actions.push({
             type: 'swap',

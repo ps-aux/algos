@@ -35,7 +35,8 @@ block content
             - {name:'bubble', upperBound:'n<sup>2</sup>'},
             - {name:'selection', upperBound:'n<sup>2</sup>'},
             - {name:'insertion', upperBound:'n<sup>2</sup>'},
-            - {name:'merge', upperBound:'n log n'}]
+            - {name:'merge', upperBound:'n log n'},
+            - {name:'quick', upperBound: 'n log n'}]
 
             each sort in sorts
                 - var name= sort.name.charAt(0).toUpperCase() + sort.name.slice(1) + ' sort'

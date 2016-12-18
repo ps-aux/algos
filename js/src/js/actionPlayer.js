@@ -32,8 +32,8 @@ export default class ActionPlayer {
     play(callback) {
         assert.ok(!this.playing, 'Already playing')
         this.playing = true
-        this._playNext()
         this.callback = callback
+        this._playNext()
     }
 
     stop() {

@@ -9,7 +9,6 @@ import ArrayRecorder from './arrayRecorder'
  */
 export function swap(array, a, b) {
     console.debug('swapping', a, b)
-    assert(a !== b)
     const tmp = array[b]
     array[b] = array[a]
     array[a] = tmp
@@ -40,7 +39,7 @@ function getRandomInt(min, max) {
 export function bubbleSort(nativeArray) {
     const array = new ArrayRecorder(nativeArray)
 
-    for (let i = array.size(); i > 0; i--) {
+    for (let i = array.size() - 1; i > 0; i--) {
         for (let j = 0; j < i; j++) {
             array.select(j)
             if (array.get(j) > array.get(j + 1)) {
@@ -156,11 +155,40 @@ export function mergeSort(nativeArray) {
 export function quickSort(nativeArray) {
     const array = new ArrayRecorder(nativeArray)
 
-    function partition(array) {
-        const pivot = array.get(0)
+    function partition(array, l, h) {
+        const pivotIndex = l
+        const pivot = array.get(pivotIndex)
+        var i = l + 1
+        var j = h
 
+        while (j >= i) {
+            // Prevents accessing an index out of bound if i, j test is first
+            // in case of descending array corner case
+            while (i <= j && array.get(i) <= pivot)
+                i++
+            while (array.get(j) > pivot && j >= i)
+                j--
+
+            if (i < j &&
+                i < h) // Descending order corner case
+                array.swap(i, j)
+        }
+        assert(i - j === 1, 'i and j are crossed')
+        array.swap(pivotIndex, j)
+
+        return j
+    }
+
+    function sort(array, l, h) {
+        if (l >= h)
+            return
+        const mid = partition(array, l, h)
+        sort(array, l, mid - 1)
+        sort(array, mid + 1, h)
 
     }
+
+    sort(array, 0, array.size() - 1)
 
     return array.result()
 }
