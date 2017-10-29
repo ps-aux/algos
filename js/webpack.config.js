@@ -1,66 +1,39 @@
-const validate = require('webpack-validator')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+// const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 
 
 const config = {
-    entry: "./src/js/main.js",
+    entry: "./src/index.js",
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: "bundle.js"
     },
-
     module: {
-        loaders: [
+        rules: [
             {
-                test: /\.(js|jsx)$/,
+                test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader'
             },
             {
-                test: /\.less$/,
-                exclude: /node_modules/,
-                loader: ExtractTextPlugin.extract('style', 'css!less-loader')
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
             },
             {
-                test: /\.scss$/,
-                exclude: /node_modules/,
-                loader: ExtractTextPlugin.extract('style', 'css?sourceMap!sass-loader?sourceMap')
-            },
-            // Bcs of bootstrap
-            {
-                test: /\.woff$/,
-                loader: "url-loader?limit=10000&mimetype=application/font-woff&name=[path][name].[ext]"
-            }, {
-                test: /\.woff2$/,
-                loader: "url-loader?limit=10000&mimetype=application/font-woff2&name=[path][name].[ext]"
-            }, {
-                test: /\.(eot|ttf|svg|gif|png)$/,
-                loader: "file-loader"
+                test: /\.(png|svg|jpg|gif)$/,
+                loader: 'file-loader'
             }
         ]
-
     },
-
     plugins: [
-        // Output extracted CSS to a file
-        new ExtractTextPlugin('style.css'),
         new HtmlWebpackPlugin({
-            template: '!!pug!src/html/index.pug',
-            excludeChunks: ['style.css']
-        }),
-        new HtmlWebpackPlugin({
-            filename: 'sorting.html',
-            template: '!!pug!src/html/sorting.pug'
+            template: 'public/index.html'
         })
     ],
-
     devServer: {
-        inline: true
-    },
-    // Cannot be eval-source-map bcs of sass
-    devtool: 'source-map'
+        contentBase: './build'
+    }
 }
 
-module.exports = validate(config)
+module.exports = config

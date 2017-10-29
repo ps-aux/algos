@@ -1,11 +1,11 @@
-require('../style/my.scss')
+require('../../style/my.scss')
 // require('bootstrap')
 
 import assert from 'assert'
 import _ from 'lodash'
 import ActionPlayer from './actionPlayer'
 import Display from './display'
-import * as algs from  './sorting'
+import * as algs from './sorting'
 
 // Turn off debug
 const debug = false

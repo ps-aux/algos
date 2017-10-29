@@ -1,4 +1,3 @@
 build
 *.log
-bundle.js
 node_modules
