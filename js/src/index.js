@@ -1,9 +1,15 @@
-import './style/index.css'
+import './style/index.sass'
 import ReactDOM from 'react-dom'
 import React from 'react'
-import img from '../img/js.png'
+import {BrowserRouter} from 'react-router-dom'
+import ArraySort from 'src/components/ArraySort'
 
 
-const rootEl = document.getElementById('root')
+const rootEl = window.document.getElementById('root')
 
-ReactDOM.render(<div>Hello!</div>, rootEl)
+
+ReactDOM.render(<BrowserRouter>
+    <ArraySort/>
+</BrowserRouter>, rootEl)
+
+

@@ -8,7 +8,7 @@ import ArrayRecorder from './arrayRecorder'
  * @param b second index
  */
 export function swap(array, a, b) {
-    console.debug('swapping', a, b)
+    console.debug(`swapping ${array[a]} <-> ${array[b]}`)
     const tmp = array[b]
     array[b] = array[a]
     array[a] = tmp

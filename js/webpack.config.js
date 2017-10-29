@@ -9,6 +9,9 @@ const config = {
         path: path.resolve(__dirname, 'build'),
         filename: "bundle.js"
     },
+    resolve: {
+        modules: ['node_modules', path.resolve(__dirname)]
+    },
     module: {
         rules: [
             {
@@ -21,6 +24,11 @@ const config = {
                 use: ['style-loader', 'css-loader']
             },
             {
+                test: /\.sass$/,
+                exclude: /node_modules/,
+                loaders: ['style-loader', 'css-loader', 'sass-loader']
+            },
+            {
                 test: /\.(png|svg|jpg|gif)$/,
                 loader: 'file-loader'
             }
@@ -31,8 +39,11 @@ const config = {
             template: 'public/index.html'
         })
     ],
+    devtool: 'inline-source-map',
     devServer: {
-        contentBase: './build'
+        contentBase: './build',
+        // For browser history
+        historyApiFallback: true
     }
 }
 
