@@ -18,24 +18,28 @@ export const heap = () => {
         if (pV >= v)
             return
         // Swap parent and child
-        data[k] = data[p]
+        data[k] = pV
         data[p] = v
         swimUp(p)
     }
 
-    const node = k => {
-        const value = data[k]
-        return value ? {
-            value,
+    const isOutOfBounds = k => k > data.length - 1
+
+    const node = k =>
+        isOutOfBounds(k) ? null : {
+            value: data[k],
             left: node(k * 2),
             right: node(k * 2 + 1)
-        } : null
-    }
+        }
 
     return {
         insert: el => {
             data.push(el)
             swimUp(data.length - 1)
+        },
+
+        min: () => {
+
         },
 
         asTree: () => node(1)
