@@ -1,12 +1,12 @@
 import React from 'react'
 // We cannot use the name Array or we get an error. Stange :|
 import Arraj from 'src/components/Array'
-import {bubbleSort, insertionSort, selectionSort} from 'src/algo/sorting/insertion'
+import {bubbleSort, partition, insertionSort, selectionSort, quickSort} from 'src/algo/sorting'
 import {randomArray} from 'src/algo/array'
 
 const array = randomArray(20)
 
-const sort = bubbleSort
+const sort = a => quickSort(a, 0, a.length)
 
 class ArraySort extends React.Component {
 
