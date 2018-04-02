@@ -1,9 +1,15 @@
 .d3
   .tree
     transform: translate(200px, 200px)
-    .nodes *
-      //fill: steelblue
-      stroke: none
+    .nodes
+      circle
+        stroke: red
+        fill: white
+        stroke-width: 2px
+      text
+        text-anchor: middle
+        alignment-baseline: middle
+
     .links *
       fill: none
       stroke: #ccc
