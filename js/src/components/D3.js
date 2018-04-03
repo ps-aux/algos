@@ -1,53 +1,24 @@
-import React, {createRef} from 'react'
+import React from 'react'
 import 'd3-selection-multi'
 import * as d3 from 'd3'
-import {ascend, compose, descend, map, path, prop, range, sort} from 'ramda'
+import {prop, range} from 'ramda'
 import './d3.sass'
 
-let num = 1
 
-const dummyNode = {
-    dummy: true
-}
+const size = n => !isNode(n) ?
+    0 : n.children.reduce((a, c) => a + size(c), 0) + 1
 
-const tree = {
-    name: 'root node',
-    value: num,
-    children: [dummyNode, dummyNode]
-}
-
-const size = n =>
-    n.children
-        .reduce((a, c) => a + size(c), 0) + 1
-
-const smallestChild = n => {
-    const sortBySize = compose(
-        map(prop('child')),
-        sort(ascend(prop('size'))),
-        map(c => ({child: c, size: size(c)}))
-    )
-
-    return sortBySize(n.children)[0]
-}
-
-const nextNode = () => {
-    num++
-    return {
-        name: 'node ' + num,
-        value: num,
-        children: []
-    }
-}
+const isNode = n => n && n.value != null
 
 const visit = (n, onVisit) => {
-    if (n.dummy)
+    if (!isNode(n))
         return
     onVisit(n)
     n.children.forEach(c => visit(c, onVisit))
 }
 
 const find = (n, val) => {
-    if (n.dummy)
+    if (!isNode(n))
         return
     if (n.value === val)
         return n
@@ -59,51 +30,28 @@ const find = (n, val) => {
     }
 }
 
-const addNode = (n, max, createNode) => {
-    if (n.children.length < max) {
-        n.children.push(createNode())
-    } else {
-        addNode(smallestChild(n), max, createNode)
-    }
-}
+const bstAdd = (n, value, steps = []) => {
+    if (value === n.value)
+        return n
+    if (!isNode(n))
+        return {value, children: [{}, {}]}
 
-
-const bstNode = val => ({
-    name: 'node ' + val,
-    value: val,
-    children: [dummyNode, dummyNode]
-})
-
-const bstAdd = (n, val, path = []) => {
-    path.push(n)
-
-    if (n.value === val)
-        return path
-
-    const [left, right] = n.children
-    if (val > n.value) {
-        if (!right.value)
-            n.children[1] = bstNode(val)
-        else
-            bstAdd(right, val, path)
-    } else {
-        if (!left.value)
-            n.children[0] = bstNode(val)
-        else
-            bstAdd(left, val, path)
+    steps.push(n)
+    const cp = {
+        value: n.value,
+        children: n.children.slice()
     }
 
-    return path
+    const [left, right] = cp.children
+    if (value < n.value) {
+        cp.children[0] = bstAdd(left, value, steps)
+    } else {
+        cp.children[1] = bstAdd(right, value, steps)
+    }
+
+    return cp
 }
 
-const addNewNode = tree => {
-    addNode(tree, 2, nextNode)
-}
-
-const maxChildren = 2
-
-range(0, 0)
-    .forEach(() => addNode(tree, maxChildren))
 
 const link = d3.linkVertical()
     .x(prop('x'))
@@ -116,8 +64,8 @@ const d3Tree = (el, tree) => {
         .separation(() => 1)
 
     treeLayout(root)
-    const nodes = root.descendants().filter(n => !n.data.dummy)
-    const links = root.links().filter(l => !l.target.data.dummy)
+    const nodes = root.descendants().filter(n => n.data.value != null)
+    const links = root.links().filter(l => l.target.data.value != null)
     const svg = d3.select(el)
 
 
@@ -131,11 +79,7 @@ const d3Tree = (el, tree) => {
         .style('fill', d => d.data.marked ? 'blue' : undefined)
 
     nodeSel.select('text')
-        .text(d => d.data.dummy ? '' : d.value)
-    // .style('fill', d => d.data.marked ? 'blue' : 'none')
-    // .attrs({
-    //     fill: d => d.data.marked ? 'blue' : 'none'
-    // })
+        .text(prop('value'))
 
     const newNodes = nodeSel.enter()
         .append('g')
@@ -144,9 +88,17 @@ const d3Tree = (el, tree) => {
             transform: n => n.parent ? `translate(${n.parent.x}, ${n.parent.y})` : ''
         }))
 
-    console.log(nodes)
     newNodes
         .append('circle')
+        .attrs({
+            r: 10
+        })
+        .transition(50)
+        .delay(300)
+        .attrs({
+            r: 12
+        })
+        .transition(50)
         .attrs({
             r: 10
         })
@@ -154,10 +106,6 @@ const d3Tree = (el, tree) => {
     newNodes
         .append('text')
         .text(prop('value'))
-        .attrs({
-            // y: 0,
-            // x: 0
-        })
 
     newNodes
         .merge(nodeSel)
@@ -182,49 +130,11 @@ const d3Tree = (el, tree) => {
         .attr('d', link)
 }
 
-const d3Go = (el, data) => {
-    const c = d3.select(el)
-        .selectAll('circle')
-        .data(data)
-
-    c.enter()
-        .append('circle')
-        .attrs((d, i) => ({
-            cx: 100 + i * 100,
-            // cy: 100,
-            r: d
-            // fill: 'green'
-        }))
-
-    c.transition().attrs((d, i) => ({
-        cx: 100 + i * 100,
-        cy: 200,
-        r: d,
-        fill: 'purple'
-    }))
-
-
-    // c.attrs((d, i) => ({
-    //     cx: 100 + i * 100,
-    //     cy: 200,
-    //     r: d,
-    //     fill: 'purple'
-    // }))
-
-    // p.enter().append('p')
-    // .text(function (d) {
-    //     return "I’m number " + d + "!"
-    // })
-}
-
 const randomArray = n => range(0, n).map(() => Math.random() * 40)
 
-let marked = 1
-
-
-const select = (val, el) => {
+const select = (val, el, tree) => {
     // Reset
-    visit(tree, n => n.marked = false)
+    removeSelection(el, tree)
     // Mark
     const f = find(tree, val)
     f.marked = true
@@ -232,27 +142,39 @@ const select = (val, el) => {
     d3Tree(el, tree)
 }
 
+const removeSelection = (el, tree) => {
+    visit(tree, n => n.marked = false)
+    d3Tree(el, tree)
+}
+
+
 const D3 = () => {
     let el
+    let tree = {}
     const ref = _el => {
         el = _el
         d3Tree(el, tree)
     }
 
+
     return <div className="d3">
         <button onClick={() => {
-            // addNewNode(tree)
             const num = Math.floor(Math.random() * 100)
-            const path = bstAdd(tree, num)
-            d3Tree(el, tree)
+            const steps = []
+            const prevTree = tree
+            tree = bstAdd(tree, num, steps)
 
-            return
-            const int = setTimeout(() => {
-                if (!path.length)
+            const int = setInterval(() => {
+                if (!steps.length) {
                     clearInterval(int)
-                const v = path.shift().value
-                select(v, el)
-            }, 1000)
+                    removeSelection(el, prevTree)
+                    d3Tree(el, tree)
+                    return
+                }
+
+                const v = steps.shift().value
+                select(v, el, prevTree)
+            }, 300)
         }}>go
         </button>
         <button onClick={() => {
