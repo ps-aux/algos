@@ -1,73 +1,39 @@
 import React from 'react'
 import 'd3-selection-multi'
 import * as d3 from 'd3'
-import {prop, range} from 'ramda'
+import {curry, curryN, prop, range} from 'ramda'
 import './d3.sass'
+import bst from 'src/algo/data-structures/bst'
 
 
-const size = n => !isNode(n) ?
-    0 : n.children.reduce((a, c) => a + size(c), 0) + 1
-
-const isNode = n => n && n.value != null
-
-const visit = (n, onVisit) => {
-    if (!isNode(n))
-        return
-    onVisit(n)
-    n.children.forEach(c => visit(c, onVisit))
-}
-
-const find = (n, val) => {
-    if (!isNode(n))
-        return
-    if (n.value === val)
-        return n
-
-    for (let c of n.children) {
-        const found = find(c, val)
-        if (found)
-            return found
-    }
-}
-
-const bstAdd = (n, value, steps = []) => {
-    if (value === n.value)
-        return n
-    if (!isNode(n))
-        return {value, children: [{}, {}]}
-
-    steps.push(n)
-    const cp = {
-        value: n.value,
-        children: n.children.slice()
-    }
-
-    const [left, right] = cp.children
-    if (value < n.value) {
-        cp.children[0] = bstAdd(left, value, steps)
-    } else {
-        cp.children[1] = bstAdd(right, value, steps)
-    }
-
-    return cp
-}
+const translate = ({x, y}) => `translate(${x}, ${y})`
 
 
 const link = d3.linkVertical()
     .x(prop('x'))
     .y(prop('y'))
 
-const d3Tree = (el, tree) => {
+
+const calcLayout = tree => {
     const root = d3.hierarchy(tree)
     const treeLayout = d3.tree()
         .nodeSize([20, 50])
         .separation(() => 1)
 
     treeLayout(root)
-    const nodes = root.descendants().filter(n => n.data.value != null)
-    const links = root.links().filter(l => l.target.data.value != null)
-    const svg = d3.select(el)
+    const nodes = root.descendants()
+        .filter(n => n.data.value != null)
 
+
+    const links = root.links()
+        .filter(l => l.target.data.value != null)
+
+    console.log('nodes', nodes)
+    return {nodes, links}
+}
+
+const drawLayout = (el, {nodes, links}) => {
+    const svg = d3.select(el)
 
     const nodeSel = svg.select('.nodes')
         .selectAll('.node')
@@ -76,7 +42,7 @@ const d3Tree = (el, tree) => {
     nodeSel.select('circle')
         .classed('selected', d => d.data.marked)
         .transition()
-        .style('fill', d => d.data.marked ? 'blue' : undefined)
+        .style('fill', d => d.selected ? 'blue' : undefined)
 
     nodeSel.select('text')
         .text(prop('value'))
@@ -85,7 +51,7 @@ const d3Tree = (el, tree) => {
         .append('g')
         .classed('node', true)
         .attrs(({
-            transform: n => n.parent ? `translate(${n.parent.x}, ${n.parent.y})` : ''
+            transform: n => n.parent ? translate(n.parent) : ''
         }))
 
     newNodes
@@ -112,10 +78,15 @@ const d3Tree = (el, tree) => {
         .transition()
         .duration(300)
         .attrs(({
-            transform: n => `translate(${n.x}, ${n.y})`
+            transform: n => {
+                return translate(n)
+            }
         }))
+        .on('end', () => {
+            console.log('transition started')
+        })
 
-// Links
+    // Links
     const linkSel = svg.select('.links')
         .selectAll('.link')
         .data(links, d => d.source.value + '-' + d.target.value)
@@ -130,59 +101,126 @@ const d3Tree = (el, tree) => {
         .attr('d', link)
 }
 
-const randomArray = n => range(0, n).map(() => Math.random() * 40)
+const drawTree = (el, tree, after) => {
+    const l = calcLayout(tree)
+    after && after(l.nodes)
 
-const select = (val, el, tree) => {
-    // Reset
-    removeSelection(el, tree)
-    // Mark
-    const f = find(tree, val)
-    f.marked = true
+    drawLayout(el, l)
+    const redraw = change => {
+        change && change(l.nodes)
+        console.log('redrawing', l)
+        drawLayout(el, l)
+        return redraw
+    }
 
-    d3Tree(el, tree)
+    return redraw
 }
 
-const removeSelection = (el, tree) => {
-    visit(tree, n => n.marked = false)
-    d3Tree(el, tree)
+const drawer = curryN(2, drawTree)
+
+const removeSelection = (tree, draw) => {
+    tree.visit(n => n.marked = false)
+    draw(tree)
 }
 
+
+const btn = (name, action) =>
+    <button onClick={action}>{name}</button>
+
+
+const findDNode = (dNodes, n) =>
+    dNodes.find(dn => dn.data === n)
+
+const select = n => dNodes => {
+    const dn = findDNode(dNodes, n)
+    dn.selected = true
+}
+
+const moveDNode = (dn, dst) => {
+    dn.x = dst.x
+    dn.y = dst.y
+    dn.move = true
+}
+
+const switchNodes = (n1, n2) => dNodes => {
+    const dn1 = findDNode(dNodes, n1)
+    const dn2 = findDNode(dNodes, n2)
+
+    const dn1pos = {x: dn1.x, y: dn1.y}
+    moveDNode(dn1, dn2)
+    moveDNode(dn2, dn1pos)
+
+}
 
 const D3 = () => {
     let el
-    let tree = {}
+    let tree = bst()
+    let draw
+
     const ref = _el => {
         el = _el
-        d3Tree(el, tree)
+        draw = drawer(el)
+        draw(tree)
     }
 
 
     return <div className="d3">
         <button onClick={() => {
             const num = Math.floor(Math.random() * 100)
-            const steps = []
-            const prevTree = tree
-            tree = bstAdd(tree, num, steps)
+            // const steps = []
+            // const prevTree = tree
+            // tree = bstAdd(tree, num, steps)
+            tree = tree.add(num)
+            console.log(tree)
+            draw(tree)
 
-            const int = setInterval(() => {
-                if (!steps.length) {
-                    clearInterval(int)
-                    removeSelection(el, prevTree)
-                    d3Tree(el, tree)
-                    return
-                }
-
-                const v = steps.shift().value
-                select(v, el, prevTree)
-            }, 300)
+            // const int = setInterval(() => {
+            //     if (!steps.length) {
+            //         clearInterval(int)
+            //         removeSelection(el, prevTree)
+            //         drawTree(el, tree)
+            //         return
+            //     }
+            //
+            //     const v = steps.shift().value
+            //     select(v, el, prevTree)
+            // }, 300)
         }}>go
         </button>
-        <button onClick={() => {
-            const vals = []
-            visit(tree, n => vals.push(n.value))
-            const v = vals[Math.floor(Math.random() * (vals.length - 1))]
-        }}>mark 4
-        </button>
+
+        {btn('selecr', () => {
+            const vals = tree.reduce((acc, v) => (acc.push(v), acc), [])
+            const idx = Math.floor(Math.random() * (vals.length - 1))
+            removeSelection(tree, draw)
+            const val = vals[0]
+            // select(vals[idx], tree, draw)
+            draw(tree, tree.find(val))
+        })}
+        {btn('visit', () => {
+            const nodes = []
+            tree.visit(n => nodes.push(n))
+
+
+            const id = setInterval(() => {
+                const n = nodes.shift()
+                draw(tree, select(n))
+
+                if (!nodes.length)
+                    clearInterval(id)
+            }, 500)
+        })}
+
+        {btn('move', () => {
+            const nodes = []
+            tree.visit(n => nodes.push(n))
+            const redraw = draw(tree, switchNodes(nodes[3], nodes[4]))
+            setTimeout(() => {
+                redraw(dNodes => {
+                    // dNodes[3].selected = true
+                    switchNodes(nodes[0], nodes[3])(dNodes)
+                })
+            }, 500)
+        })}
 
         <svg ref={ref} width="1200" height="600">
             <g className="tree">
