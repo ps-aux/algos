@@ -37,7 +37,12 @@ const addToPath = (path, val) => {
     return cp
 }
 
-const add = (n, value, path = [0], steps = []) => {
+const noopActions = {
+    select: () => undefined,
+    switch: () => undefined
+}
+
+const add = (n, value, {path = [0], steps = [], action = noopActions} = {}) => {
     if (value === n.value)
         return n
     if (!isNode(n))
@@ -48,7 +53,8 @@ const add = (n, value, path = [0], steps = []) => {
             children: [{}, {}]
         }
 
-    steps.push(n)
+
+    steps.push(action.select(path))
     const cp = {
         value: n.value,
         path: n.path,
@@ -59,9 +65,9 @@ const add = (n, value, path = [0], steps = []) => {
 
     const [left, right] = cp.children
     if (value < n.value) {
-        cp.children[0] = add(left, value, addToPath(path, 0), steps)
+        cp.children[0] = add(left, value, {path: addToPath(path, 0), steps, action})
     } else {
-        cp.children[1] = add(right, value, addToPath(path, 1), steps)
+        cp.children[1] = add(right, value, {path: addToPath(path, 1), steps, action})
     }
 
     return cp

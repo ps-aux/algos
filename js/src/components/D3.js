@@ -5,9 +5,9 @@ import bst from 'src/algo/data-structures/bst'
 import treeDrawer from './treeDrawer'
 import {clearSelection, render, select, switchNodes} from './treeActions'
 
-const removeSelection = (tree, draw) => {
-    tree.visit(n => n.marked = false)
-    draw(tree)
+const treeActions = {
+    select,
+    switch: switchNodes
 }
 
 const btn = (name, action) =>
@@ -48,7 +48,7 @@ const sndTree = {
 
 const D3 = () => {
     let el
-    let tree = bst().add(5).add(1).add(8)
+    let tree = bst().add(51).add(50).add(52)
     let draw
 
     const ref = _el => {
@@ -60,13 +60,18 @@ const D3 = () => {
 
     return <div className="d3">
         {btn('Add node', () => {
-            tree = tree.add(ranNum())
+            const steps = []
+            tree = tree.add(ranNum(), {steps, action: treeActions})
+            console.log('steps', steps)
+            const s = [...steps, clearSelection(null, {duration: 0})]
+            draw(s)
             draw(render(tree))
         })}
         {btn('Select', () => {
             draw([
-                clearSelection(),
-                select([0])
+                select([0], {duration: 2000}),
+                select([0, 0], {duration: 2000}),
+                select([0, 1], {duration: 2000})
             ])
         })}
         {btn('Switch 1 <-> 2', () => {

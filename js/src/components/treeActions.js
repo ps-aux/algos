@@ -1,4 +1,4 @@
-const actionCreator = type => data => ({type, data})
+const actionCreator = type => (data, opts = {}) => ({type, data, ...opts})
 
 export const RENDER = 'redraw'
 

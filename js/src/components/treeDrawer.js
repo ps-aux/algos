@@ -50,16 +50,28 @@ const calcLayout = tree => {
 }
 
 
-const moveLNode = (n, dst) => {
-    // dn.x = dst.x
-    // dn.y = dst.y
-    // dn.move = true
+const moveLNode = (n, dst) =>
     n.move = pick(['x', 'y', 'value'], dst)
-}
 
 const node = ({nodes}, path) =>
     path.reduce((a, v) => a.children[v],
         {children: [nodes[0]]}) // nodes[0] is the root node
+
+
+const selectAnim = (nodeSel, onEnd, {duration}) => {
+    const circles = nodeSel.select('circle')
+
+    let left = 0
+    circles
+        .transition()
+        .duration(duration)
+        .style('fill', d => d.selected ? 'blue' : 'white')
+        .each(() => left++)
+        .on('end', () => {
+            if (--left === 0)
+                onEnd()
+        })
+}
 
 const drawLayout = (el, {nodes, links}, anim) => {
     console.log('drawing', {nodes, links})
@@ -69,10 +81,6 @@ const drawLayout = (el, {nodes, links}, anim) => {
         .selectAll('.node')
         .data(nodes, prop('value'))
 
-    nodeSel.select('circle')
-        .classed('selected', d => d.data.marked)
-        .transition()
-        .style('fill', d => d.selected ? 'blue' : undefined)
 
     nodeSel.select('text')
         .text(prop('value'))
@@ -151,18 +159,22 @@ let layout
 
 
 const handlers = {
-    [SELECT]: ({data: path, layout, draw, done}) => {
+    [SELECT]: ({data: path, layout, draw, done, duration}) => {
+        layout.nodes.forEach(n => n.selected = false)
         const ln = node(layout, path)
         ln.selected = true
 
-        draw()
-        done()
+        draw(nodeSel => selectAnim(nodeSel, () => {
+            console.log('selected', path)
+            done()
+        }, {duration}))
     },
-    [CLEAR_SELECTION]: ({layout, draw, done}) => {
+    [CLEAR_SELECTION]: ({layout, draw, done, duration}) => {
         layout.nodes.forEach(n => n.selected = false)
-
-        draw()
-        done()
+        draw(nodeSel => selectAnim(nodeSel, () => {
+            console.log('cleared')
+            done()
+        }, {duration}))
     },
     [SWITCH]: ({data, layout, draw, done}) => {
         const src = node(layout, data.src)
@@ -193,8 +205,7 @@ const handlers = {
 
 
 const drawTree = (el, action, done) => {
-    console.debug('action', action)
-    const {type, data} = action
+    const {type, data, duration = 500} = action
 
     if (type === RENDER) {
         layout = calcLayout(data)
@@ -207,7 +218,8 @@ const drawTree = (el, action, done) => {
         draw: anim => drawLayout(el, layout, anim),
         done,
         layout,
-        data
+        data,
+        duration
     })
 }
 
@@ -215,14 +227,13 @@ const drawTree = (el, action, done) => {
 let busy = false
 const queue = []
 const onDone = () => {
-    console.debug('Action done')
+    console.debug('Action done', queue)
     busy = false
-    const next = queue.pop()
+    const next = queue.shift()
     next && next()
 }
 
 const execAction = (el, action) => {
-
     const job = () => {
         drawTree(el, action, onDone)
     }
