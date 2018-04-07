@@ -32,10 +32,10 @@ const sndTree = {
             children: [
                 {},
                 {
-                value: 123,
-                path: [0, 0, 0],
-                children: [{}, {}]
-            }]
+                    value: 123,
+                    path: [0, 0, 0],
+                    children: [{}, {}]
+                }]
         },
         {
             value: 1,
@@ -64,15 +64,14 @@ const D3 = () => {
         })}
         {btn('Select', () => {
             draw({type: 'clear-selection'})
-            draw({type: 'select', data: ranNode(tree)})
+            draw({type: 'select', data: [0]})
         })}
         {btn('Switch 1 <-> 2', () => {
-            const nodes = treeNodes(tree)
             draw({
                 type: 'switch',
                 data: {
-                    src: nodes[1],
-                    dst: nodes[2]
+                    src: [0, 0],
+                    dst: [0, 1]
                 }
             })
 

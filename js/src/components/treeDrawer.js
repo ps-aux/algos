@@ -1,4 +1,4 @@
-import {pick, prop, propEq} from 'ramda'
+import {pick, prop, propEq, tail} from 'ramda'
 import * as d3 from 'd3'
 
 const translate = ({x, y}) => `translate(${x}, ${y})`
@@ -49,14 +49,23 @@ const calcLayout = tree => {
 }
 
 
-const findLNode = (lNodes, n) =>
-    lNodes.find(propEq('data', n))
-
 const moveLNode = (n, dst) => {
     // dn.x = dst.x
     // dn.y = dst.y
     // dn.move = true
     n.move = pick(['x', 'y', 'value'], dst)
+}
+
+const node = ({nodes}, path) =>
+    path.reduce((a, v) => a.children[v],
+        {children: [nodes[0]]}) // nodes[0] is the root node
+
+const switchNodes = (layout, srcPath, dstPath) => {
+    const src = node(layout, srcPath)
+    const dst = node(layout, dstPath)
+
+    moveLNode(src, dst)
+    moveLNode(dst, src)
 }
 
 const switchA = (layout, src, dst, redraw) => {
@@ -75,17 +84,9 @@ const switchA = (layout, src, dst, redraw) => {
     }
 }
 
-const switchNodes = ({nodes}, srcN, dstN) => {
-    const src = findLNode(nodes, srcN)
-    const dst = findLNode(nodes, dstN)
 
-    moveLNode(src, dst)
-    moveLNode(dst, src)
-}
-
-
-const select = ({nodes}, n) => {
-    const ln = findLNode(nodes, n)
+const select = (layout, n) => {
+    const ln = node(layout, n)
     ln.selected = true
 }
 
@@ -192,15 +193,12 @@ const drawTree = (el, action) => {
 
     if (type === 'tree') {
         const tree = data
-
         layout = calcLayout(tree)
         drawLayout(el, layout)
-        return
     }
     if (type === 'select') {
-        const node = data
-        console.log('selecting', node)
-        select(layout, node)
+        const path = data
+        select(layout, path)
         drawLayout(el, layout)
     }
 
@@ -216,16 +214,6 @@ const drawTree = (el, action) => {
         })
         drawLayout(el, layout, anim)
     }
-    return
-
-    const redraw = change => {
-        change && change(l.nodes)
-        drawLayout(el, l, {redraw})
-        return redraw
-    }
-
-
-    return redraw
 }
 
 
