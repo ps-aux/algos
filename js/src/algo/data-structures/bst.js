@@ -28,15 +28,22 @@ const find = (n, val) => {
 }
 
 const reduce = (n, reducer, acc) =>
-    (visit(n, n => acc = reducer(acc, n.value)), acc)
+    (visit(n, n => acc = reducer(acc, n)), acc)
 
 
-const bstAdd = (n, value, steps = []) => {
+const addToPath = (path, val) => {
+    const cp = path.slice()
+    cp.push(val)
+    return cp
+}
+
+const add = (n, value, path = [0], steps = []) => {
     if (value === n.value)
         return n
     if (!isNode(n))
         return {
             value,
+            path,
             _size: 1,
             children: [{}, {}]
         }
@@ -44,15 +51,17 @@ const bstAdd = (n, value, steps = []) => {
     steps.push(n)
     const cp = {
         value: n.value,
+        path: n.path,
         _size: n._size + 1,
         children: n.children.slice()
     }
 
+
     const [left, right] = cp.children
     if (value < n.value) {
-        cp.children[0] = bstAdd(left, value, steps)
+        cp.children[0] = add(left, value, addToPath(path, 0), steps)
     } else {
-        cp.children[1] = bstAdd(right, value, steps)
+        cp.children[1] = add(right, value, addToPath(path, 1), steps)
     }
 
     return cp
@@ -68,7 +77,7 @@ const bindMethods = obj => {
         return res
     }
 
-    obj.add = bind(bstAdd)
+    obj.add = bind(add)
     obj.find = bind(find)
     obj.size = bind(size)
     obj.visit = bind(visit)

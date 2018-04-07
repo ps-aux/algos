@@ -64,13 +64,13 @@ describe('bst', () => {
 
     })
 
-    it ('reduce()', () => {
+    it('reduce()', () => {
         const bst = create()
             .add(4)
             .add(2)
             .add(8)
 
-        expect(bst.reduce(add, 100)).toBe(114)
+        expect(bst.reduce((a, n) => a + n.value, 100)).toBe(114)
 
     })
 })
