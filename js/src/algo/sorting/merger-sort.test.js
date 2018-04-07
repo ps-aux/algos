@@ -1,10 +1,9 @@
-import {mergeArrays} from 'src/algo/sorting'
-import {mergeSort} from 'src/algo/sorting/index'
+import ms from 'src/algo/sorting/merge-sort'
 
 let arrays = [
-    [3,8,6,2,1,10,3]]
-    // [1, -6, 4, 5, 6, 2, 4, 2, 2, 2, 2, 9, 1000],
-    // [2, 4, 5, 6, 7, 8, 9]]
+    [3, 8, 6, 2, 1, 10, 3]]
+// [1, -6, 4, 5, 6, 2, 4, 2, 2, 2, 2, 9, 1000],
+// [2, 4, 5, 6, 7, 8, 9]]
 
 
 const sorted = arr =>
@@ -34,7 +33,7 @@ it('mergeArrays works', () => {
         const aux = []
         const sortedArr = sorted(arr)
 
-        mergeArrays(arr, aux,
+        ms._mergeArrays(arr, aux,
             0, arr1.length, arr1.length + arr2.length)
 
         expect(arr)
@@ -42,11 +41,3 @@ it('mergeArrays works', () => {
     })
 })
 
-it('mergeSort works', () => {
-    arrays.forEach(arr => {
-        arr = arr.slice()
-        const sortedArr = sorted(arr)
-        mergeSort(arr)
-        expect(arr).toEqual(sortedArr)
-    })
-})
