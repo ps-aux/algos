@@ -1,5 +1,6 @@
 import {pick, prop, propEq, tail} from 'ramda'
 import * as d3 from 'd3'
+import {CLEAR_SELECTION, RENDER, SELECT, SWITCH} from './treeActions'
 
 const translate = ({x, y}) => `translate(${x}, ${y})`
 
@@ -59,39 +60,6 @@ const moveLNode = (n, dst) => {
 const node = ({nodes}, path) =>
     path.reduce((a, v) => a.children[v],
         {children: [nodes[0]]}) // nodes[0] is the root node
-
-const switchNodes = (layout, srcPath, dstPath) => {
-    const src = node(layout, srcPath)
-    const dst = node(layout, dstPath)
-
-    moveLNode(src, dst)
-    moveLNode(dst, src)
-}
-
-const switchA = (layout, src, dst, redraw) => {
-    switchNodes(layout, src, dst)
-    let latch = 2
-    return nodeSel => {
-        switchAnimation(nodeSel, (n, el) => {
-            console.log('anim ended', n, el)
-            el.setAttribute('transform', translate(n))
-            n.value = n.move.value
-            delete n.move
-
-            if (--latch === 0)
-                redraw()
-        })
-    }
-}
-
-
-const select = (layout, n) => {
-    const ln = node(layout, n)
-    ln.selected = true
-}
-
-const clearSelection = ({nodes}) =>
-    nodes.forEach(n => n.selected = false)
 
 const drawLayout = (el, {nodes, links}, anim) => {
     console.log('drawing', {nodes, links})
@@ -153,12 +121,6 @@ const drawLayout = (el, {nodes, links}, anim) => {
     nodeSel
         .exit().remove()
 
-    nodeSel
-        .attrs(({
-            // fill: 'orange'
-        }))
-
-
     // Links
     const linkSel = svg.select('.links')
         .selectAll('.link')
@@ -187,38 +149,98 @@ const drawLayout = (el, {nodes, links}, anim) => {
 
 let layout
 
-const drawTree = (el, action) => {
-    console.debug('action', action)
-    const {type, data} = action
 
-    if (type === 'tree') {
-        const tree = data
-        layout = calcLayout(tree)
-        drawLayout(el, layout)
-    }
-    if (type === 'select') {
-        const path = data
-        select(layout, path)
-        drawLayout(el, layout)
-    }
+const handlers = {
+    [SELECT]: ({data: path, layout, draw, done}) => {
+        const ln = node(layout, path)
+        ln.selected = true
 
-    if (type === 'clear-selection') {
-        clearSelection(layout)
-        drawLayout(el, layout)
-    }
+        draw()
+        done()
+    },
+    [CLEAR_SELECTION]: ({layout, draw, done}) => {
+        layout.nodes.forEach(n => n.selected = false)
 
-    if (type === 'switch') {
-        const {src, dst} = data
-        const anim = switchA(layout, src, dst, () => {
-            drawLayout(el, layout)
-        })
-        drawLayout(el, layout, anim)
+        draw()
+        done()
+    },
+    [SWITCH]: ({data, layout, draw, done}) => {
+        const src = node(layout, data.src)
+        const dst = node(layout, data.dst)
+
+        moveLNode(src, dst)
+        moveLNode(dst, src)
+
+        let latch = 2
+
+        const anim = nodeSel =>
+            switchAnimation(nodeSel,
+                (n, el) => {
+                    console.log('anim ended', n, el)
+                    el.setAttribute('transform', translate(n))
+                    n.value = n.move.value
+                    delete n.move
+
+                    if (--latch === 0) {
+                        draw()
+                        done()
+                    }
+                })
+
+        draw(anim)
     }
 }
 
 
-const create = el =>
-    (action) => drawTree(el, action)
+const drawTree = (el, action, done) => {
+    console.debug('action', action)
+    const {type, data} = action
+
+    if (type === RENDER) {
+        layout = calcLayout(data)
+        drawLayout(el, layout)
+        done()
+        return
+    }
+
+    handlers[type]({
+        draw: anim => drawLayout(el, layout, anim),
+        done,
+        layout,
+        data
+    })
+}
+
+
+let busy = false
+const queue = []
+const onDone = () => {
+    console.debug('Action done')
+    busy = false
+    const next = queue.pop()
+    next && next()
+}
+
+const execAction = (el, action) => {
+
+    const job = () => {
+        drawTree(el, action, onDone)
+    }
+
+    if (!busy) {
+        busy = true
+        job()
+    }
+    else
+        queue.push(job)
+}
+
+const create = el => arg => {
+    if (typeof arg[Symbol.iterator] === 'function')
+        arg.forEach(a => execAction(el, a))
+    else
+        execAction(el, arg)
+}
 
 
 export default create

@@ -3,6 +3,7 @@ import 'd3-selection-multi'
 import './d3.sass'
 import bst from 'src/algo/data-structures/bst'
 import treeDrawer from './treeDrawer'
+import {clearSelection, render, select, switchNodes} from './treeActions'
 
 const removeSelection = (tree, draw) => {
     tree.visit(n => n.marked = false)
@@ -53,38 +54,32 @@ const D3 = () => {
     const ref = _el => {
         el = _el
         draw = treeDrawer(el)
-        draw({type: 'tree', data: tree})
+        draw(render(tree))
     }
 
 
     return <div className="d3">
         {btn('Add node', () => {
             tree = tree.add(ranNum())
-            draw({type: 'tree', data: tree})
+            draw(render(tree))
         })}
         {btn('Select', () => {
-            draw({type: 'clear-selection'})
-            draw({type: 'select', data: [0]})
+            draw([
+                clearSelection(),
+                select([0])
+            ])
         })}
         {btn('Switch 1 <-> 2', () => {
-            draw({
-                type: 'switch',
-                data: {
-                    src: [0, 0],
-                    dst: [0, 1]
-                }
-            })
-
-            setTimeout(() => {
-                draw({type: 'tree', data: sndTree})
-            }, 1000)
+            draw([
+                switchNodes({src: [0, 0], dst: [0, 1]}),
+                render(sndTree)
+            ])
         })}
 
         {btn('move',
             () => {
                 const nodes = []
                 tree.visit(n => nodes.push(n))
-                console.log('nodes', nodes)
                 const redraw = draw(tree, switchNodes(nodes[1], nodes[2]))
                 setTimeout(() => {
                     redraw(dNodes => {
