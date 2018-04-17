@@ -1,4 +1,4 @@
-import {pick, prop, propEq, tail} from 'ramda'
+import {complement, pick, prop, propEq, tail} from 'ramda'
 import * as d3 from 'd3'
 import {CLEAR_SELECTION, RENDER, SELECT, SWITCH} from './treeActions'
 
@@ -7,6 +7,7 @@ const translate = ({x, y}) => `translate(${x}, ${y})`
 const link = d3.linkVertical()
     .x(prop('x'))
     .y(prop('y'))
+
 
 const switchAnimation = (nodesSel, onEnd) => {
     console.log('animating move')
@@ -58,6 +59,20 @@ const node = ({nodes}, path) =>
         {children: [nodes[0]]}) // nodes[0] is the root node
 
 
+const selectCircle = c => c.style('fill', 'red')
+
+const deselectCirle = c => c.style('fill', 'white')
+
+const applyOrElse = (p, t, f) => s => {
+    s.filter(p)
+        .call(t)
+    s.filter(complement(p))
+        .call(f)
+}
+
+const applySelected = applyOrElse(prop('selected'), selectCircle, deselectCirle)
+
+// Can be generalized already
 const selectAnim = (nodeSel, onEnd, {duration}) => {
     const circles = nodeSel.select('circle')
 
@@ -65,7 +80,7 @@ const selectAnim = (nodeSel, onEnd, {duration}) => {
     circles
         .transition()
         .duration(duration)
-        .style('fill', d => d.selected ? 'blue' : 'white')
+        .call(applySelected)
         .each(() => left++)
         .on('end', () => {
             if (--left === 0)
@@ -73,27 +88,48 @@ const selectAnim = (nodeSel, onEnd, {duration}) => {
         })
 }
 
-const drawLayout = (el, {nodes, links}, anim) => {
-    console.log('drawing', {nodes, links})
-    const svg = d3.select(el)
 
-    const nodeSel = svg.select('.nodes')
-        .selectAll('.node')
-        .data(nodes, prop('value'))
+const drawLinks = (root, links) => {
+
+    const linkSel = root.select('.links')
+        .selectAll('.link')
+        .data(links, d => nodeId(d.source) + '-' + nodeId(d.target))
 
 
-    nodeSel.select('text')
-        .text(prop('value'))
+    linkSel.enter()
+        .append('path')
+        .classed('link', true)
+        .attr('d', d => link({source: d.source, target: d.source}))
+        .merge(linkSel)
+        .transition()
+        .duration(300)
+        .attr('d', link)
 
-    const newNodes = nodeSel.enter()
+}
+
+
+const createNewNodes = entered => {
+    const newNodes = entered
         .append('g')
         .classed('node', true)
-        .attrs(({
-            transform: n => n.parent ? translate(n.parent) : ''
-        }))
 
     newNodes
         .append('circle')
+        .attrs({
+            r: 10
+        })
+
+    newNodes
+        .append('text')
+        .text(prop('value'))
+
+    return newNodes
+}
+
+
+const animNew = entered => {
+    const circles = entered.select('circle')
+    circles
         .attrs({
             r: 10
         })
@@ -108,50 +144,48 @@ const drawLayout = (el, {nodes, links}, anim) => {
             r: 10
         })
 
-    newNodes
-        .append('text')
-        .text(prop('value'))
+    circles
+        .call(selectCircle)
+        .transition(300)
+        .call(deselectCirle)
+}
 
-    newNodes
-        .merge(nodeSel)
-        .transition()
+
+const updateAll = all => {
+    all.attrs(({
+        transform: n => {
+            return translate(n)
+        }
+    }))
+}
+
+const animAll = all => {
+    all.transition()
         .duration(300)
         .ease(d3.easeBounce)
-        .attrs(({
-            transform: n => {
-                return translate(n)
-            }
-        }))
 
-    anim && anim(nodeSel)
+}
 
-    // Debug purposes only
-    nodeSel
-        .exit().remove()
+const drawNodes = (root, nodes, cb) => {
+    const nodeSel = root.select('.nodes')
+        .selectAll('.node')
+        .data(nodes, prop('value'))
 
-    // Links
-    const linkSel = svg.select('.links')
-        .selectAll('.link')
-        .data(links, d => {
-            const r = nodeId(d.source) + '-' + nodeId(d.target)
-            return r
-        })
+    const newNodes = createNewNodes(nodeSel.enter())
+    animNew(newNodes)
+    const all = newNodes.merge(nodeSel)
+    updateAll(all)
+    animAll(all)
+    cb && cb(nodeSel)
+}
 
-    // .data(links, d => d.source.value + '-' + d.target.value)
-    // .data(links, d => d.source.x + '-' + d.source.y + '-' + d.target.x + '-' + d.target.y)
+const drawLayout = (el, {nodes, links}, anim) => {
+    console.log('drawing', {nodes, links})
+    const svg = d3.select(el)
 
-    // Debug purposes only
-    linkSel
-        .exit().remove()
+    drawNodes(svg, nodes, anim)
+    drawLinks(svg, links)
 
-    linkSel.enter()
-        .append('path')
-        .classed('link', true)
-        .attr('d', d => link({source: d.source, target: d.source}))
-        .merge(linkSel)
-        .transition()
-        .duration(300)
-        .attr('d', link)
 }
 
 
@@ -205,7 +239,7 @@ const handlers = {
 
 
 const drawTree = (el, action, done) => {
-    const {type, data, duration = 500} = action
+    const {type, data, duration = 200} = action
 
     if (type === RENDER) {
         layout = calcLayout(data)
