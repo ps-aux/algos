@@ -1,8 +1,8 @@
 import {complement, pick, prop, propEq, tail} from 'ramda'
 import * as d3 from 'd3'
 import {CLEAR_SELECTION, RENDER, SELECT, SWITCH} from './treeActions'
+import {translate} from 'src/d3/utils'
 
-const translate = ({x, y}) => `translate(${x}, ${y})`
 
 const link = d3.linkVertical()
     .x(prop('x'))
@@ -18,9 +18,7 @@ const switchAnimation = (nodesSel, onEnd) => {
         .duration(500)
         // .ease(d3.easeElastic)
         .attrs(({
-            transform: n => {
-                return translate(n.move)
-            }
+            transform: n => translate(n.move)
         }))
         .on('end', function (n) {
             onEnd(n, this)
