@@ -59,50 +59,49 @@ const D3 = () => {
 
 
     return <div className="d3">
-        {btn('Add node', () => {
-            const steps = []
-            tree = tree.add(ranNum(), {steps, action: treeActions})
-            console.log('steps', steps)
-            const s = [...steps, clearSelection(null, {duration: 0})]
-            draw(s)
-            draw(render(tree))
-        })}
-        {btn('Select', () => {
-            draw([
-                select([0], {duration: 2000}),
-                select([0, 0], {duration: 2000}),
-                select([0, 1], {duration: 2000})
-            ])
-        })}
-        {btn('Switch 1 <-> 2', () => {
-            draw([
-                switchNodes({src: [0, 0], dst: [0, 1]}),
-                render(sndTree)
-            ])
-        })}
-
-        {btn('move',
-            () => {
-                const nodes = []
-                tree.visit(n => nodes.push(n))
-                const redraw = draw(tree, switchNodes(nodes[1], nodes[2]))
-                setTimeout(() => {
-                    redraw(dNodes => {
-                        // dNodes[3].selected = true
-                        // switchNodes(nodes[0], nodes[3])(dNodes)
-                    })
-                }, 1000)
+        <div className="control-panel">
+            {btn('Add node', () => {
+                const steps = []
+                tree = tree.add(ranNum(), {steps, action: treeActions})
+                console.log('steps', steps)
+                const s = [...steps, clearSelection(null, {duration: 0})]
+                draw(s)
+                draw(render(tree))
+            })}
+            {btn('Select', () => {
+                draw([
+                    select([0], {duration: 2000}),
+                    select([0, 0], {duration: 2000}),
+                    select([0, 1], {duration: 2000})
+                ])
+            })}
+            {btn('Switch 1 <-> 2', () => {
+                draw([
+                    switchNodes({src: [0, 0], dst: [0, 1]}),
+                    render(sndTree)
+                ])
             })}
 
-        <svg ref={ref} width="1200" height="400">
+            {btn('move',
+                () => {
+                    const nodes = []
+                    tree.visit(n => nodes.push(n))
+                    const redraw = draw(tree, switchNodes(nodes[1], nodes[2]))
+                    setTimeout(() => {
+                        redraw(dNodes => {
+                            // dNodes[3].selected = true
+                            // switchNodes(nodes[0], nodes[3])(dNodes)
+                        })
+                    }, 1000)
+                })}
+
+        </div>
+        <svg ref={ref} width="1200" height="800">
             <g className="tree">
                 <g className="links"/>
                 <g className="nodes"/>
             </g>
         </svg>
-        {/*<svg width="50" height="50">*/}
-        {/*<circle cx="25" cy="25" r="25" fill="purple"/>*/}
-        {/*</svg>*/}
     </div>
 }
 

@@ -102,7 +102,7 @@ const drawLinks = (root, links) => {
         .attr('d', d => link({source: d.source, target: d.source}))
         .merge(linkSel)
         .transition()
-        .duration(300)
+        .duration(150)
         .attr('d', link)
 
 }
@@ -133,16 +133,17 @@ const animNew = entered => {
         .attrs({
             r: 10
         })
-        .transition(30)
-        .ease(d3.easeBounce)
-        .delay(300)
-        .attrs({
-            r: 11
-        })
-        .transition(30)
-        .attrs({
-            r: 10
-        })
+
+    /*        .transition(30)
+            .ease(d3.easeBounce)
+            .delay(300)
+            .attrs({
+                r: 11
+            })
+            .transition(30)
+            .attrs({
+                r: 10
+            })*/
 
     circles
         .call(selectCircle)
@@ -160,6 +161,7 @@ const updateAll = all => {
 }
 
 const animAll = all => {
+    return
     all.transition()
         .duration(300)
         .ease(d3.easeBounce)
@@ -182,6 +184,11 @@ const drawNodes = (root, nodes, cb) => {
 const drawLayout = (el, {nodes, links}, anim) => {
     console.log('drawing', {nodes, links})
     const svg = d3.select(el)
+
+    svg.select(".tree")
+        .attrs({
+            transform: translate({x: 400, y: 20})
+        })
 
     drawNodes(svg, nodes, anim)
     drawLinks(svg, links)
