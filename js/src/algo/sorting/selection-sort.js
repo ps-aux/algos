@@ -1,20 +1,18 @@
-import {swap} from 'src/old/sorting'
+export const selectionSort = list => {
 
-export const selectionSort = array => {
-
-    for (let i = 0; i < array.length; i++) {
+    for (let i = 0; i < list.length; i++) {
         // invariant: subarray <0, i) is sorted and contains min elements
-        const minIndex = findMin(i, array.length - 1)
+        const minIndex = findMin(i, list.length - 1)
         if (minIndex !== i)
-            swap(array, i, minIndex)
+            list.swap(i, minIndex)
     }
 
     function findMin(l, h) {
-        let min = array[l]
+        let min = list[l]
         let minIndex = l
         for (let i = l + 1; i <= h; i++) {
-            if (array[i] < min) {
-                min = array[i]
+            if (list[i] < min) {
+                min = list[i]
                 minIndex = i
             }
         }

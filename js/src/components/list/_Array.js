@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const factor = 10
-const Array = ({array}) =>
+const _Array = ({array}) =>
     <div className="array">
         {array.map((h, i) => <Column key={i}
                                      height={h}/>)}
@@ -13,8 +13,8 @@ const Column = ({height}) =>
         <span>{height}</span>
     </div>
 
-Array.propTypes = {
+_Array.propTypes = {
     array: PropTypes.array.isRequired
 }
 
-export default Array
+export default _Array

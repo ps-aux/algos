@@ -1,14 +1,14 @@
 import React from 'react'
-// We cannot use the name Array or we get an error. Stange :|
-import Arraj from 'src/components/Array'
-import {bubbleSort, partition, insertionSort, selectionSort, quickSort} from 'src/algo/sorting'
+// We cannot use the name _Array or we get an error. Stange :|
+import Arraj from 'src/components/list/_Array'
+import {bubbleSort, partition, insertionSort, selectionSort, quickSort} from 'src/algo/sorting/index'
 import {randomArray} from 'src/algo/array'
 
 const array = randomArray(20)
 
 const sort = a => quickSort(a, 0, a.length)
 
-class ArraySort extends React.Component {
+class _ArraySort extends React.Component {
 
     state = {array}
 
@@ -31,4 +31,4 @@ class ArraySort extends React.Component {
     }
 }
 
-export default ArraySort
+export default _ArraySort

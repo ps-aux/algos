@@ -3,17 +3,17 @@ export const mergeSort = (array) => {
 }
 
 
-const doMergeSort = (array,
-                     aux = new Array(array.length),
-                     l = 0, h = array.length) => {
+const doMergeSort = (list,
+                     aux = new Array(list.length),
+                     l = 0, h = list.length) => {
     const len = h - l
     if (len < 2)
-        return // Array of size 0 & 1 => Sorted already
+        return // _Array of size 0 & 1 => Sorted already
 
     const m = Math.floor(l + len / 2)
-    doMergeSort(array, aux, l, m)
-    doMergeSort(array, aux, m, h)
-    mergeArrays(array, aux, l, m, h)
+    doMergeSort(list, aux, l, m)
+    doMergeSort(list, aux, m, h)
+    mergeArrays(list, aux, l, m, h)
 }
 
 
