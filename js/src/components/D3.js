@@ -6,6 +6,7 @@ import treeDrawer from './treeDrawer'
 import {clearSelection, render, select, switchNodes} from './treeActions'
 import * as d3 from 'd3'
 import {translate} from 'src/d3/utils'
+import {prop, range} from 'ramda'
 
 const treeActions = {
     select,
@@ -48,14 +49,73 @@ const sndTree = {
     ]
 }
 
-const addNodeButtons = el => {
+const addNodeButtons = (el, onClick) => {
 
+    const _data = range(1, 50)
+        .map(v => ({value: v}))
+
+    const remove = d => {
+        d.removed = true
+        update(_data)
+        onClick(d)
+    }
+
+    const update = data => {
+        const r = 10
+        const size = r * 2 + 5
+        const nodes = d3.select(el)
+            .selectAll('.node')
+            .data(data)
+
+        const entered = nodes.enter()
+            .append('svg')
+            .attrs({
+                height: size,
+                lidth: size,
+                viewBox: `0 0 ${size/1} ${size/1}`
+            })
+            .classed('node', true)
+            .classed('btn', true)
+            .attrs((_, i) => ({
+                // transform: translate({x: r, y: r})
+            }))
+            .on('click', d => {
+                console.log('click', d)
+                remove(d)
+            })
+
+        entered.append('circle')
+            .attrs((_, i) => ({
+                r,
+                cx: '50%',
+                cy: '50%'
+            }))
+
+
+        entered.append('text')
+            .style('text-anchor', 'middle')
+            .attrs({
+                x: '50%',
+                y: '50%'
+            })
+            .text(prop('value'))
+
+        nodes.exit().remove()
+
+        nodes.filter(prop('removed'))
+            .each(a => {
+                console.log('removed', a)
+            })
+            .classed('removed', true)
+    }
+
+    update(_data)
 }
 
 
 const D3 = () => {
     let el
-    let tree = bst().add(51).add(50).add(52)
+    let tree = bst().add(25).add(10).add(40)
     let draw
 
     const ref = _el => {
@@ -65,47 +125,26 @@ const D3 = () => {
     }
 
 
+    const addNode = val => {
+        const steps = []
+        tree = tree.add(val, {steps, action: treeActions})
+        console.log('steps', steps)
+        const s = [...steps, clearSelection(null, {duration: 0})]
+        draw(s)
+        draw(render(tree))
+    }
+
     const nodesBtns = el => {
         if (!el)
             return
-
-        console.log('eeel', el)
-        const data = [1, 2, 3]
-        const r = 10
-        const nodes = d3.select(el)
-            .selectAll("circle")
-            .data(data)
-            .enter()
-            .append('g')
-            .classed('node', true)
-            .classed('btn', true)
-            .attrs((_, i) => ({
-                transform: translate({x: i * r * 3 + 2 * r, y: r * 2})
-            }))
-            .on('click', d => {
-                console.log('click', d)
-            })
-
-        nodes.append('circle')
-            .attrs((_, i) => ({
-                r
-            }))
-
-        nodes.append('text')
-            .text(d => d)
-
+        addNodeButtons(el, ({value}) => addNode(value))
     }
 
     return <div className="d3">
         <div className="control-panel">
             <div className="buttons">
                 {btn('Add node', () => {
-                    const steps = []
-                    tree = tree.add(ranNum(), {steps, action: treeActions})
-                    console.log('steps', steps)
-                    const s = [...steps, clearSelection(null, {duration: 0})]
-                    draw(s)
-                    draw(render(tree))
+                    addNode(ranNum())
                 })}
                 {btn('Select', () => {
                     draw([
@@ -135,9 +174,10 @@ const D3 = () => {
                     })}
 
             </div>
-            <div className="new-nodes">
-                <svg ref={nodesBtns}>
-                </svg>
+            <div className="new-nodes" ref={nodesBtns}
+                 style={{
+                     flexDirection: 'row'
+                 }}>
             </div>
         </div>
         <svg ref={ref} width="1200" height="800">
