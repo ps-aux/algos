@@ -1,5 +1,5 @@
 export const bubbleSort = list => {
-    // Little bit effective version of bubble sort which
+    // Little bit effective version of bubble onSort which
     // counts on the end of array to be sorted
     for (let i = list.length - 1; i > 0; i--) {
         // invariant: subarray <i, array.length) is sorted

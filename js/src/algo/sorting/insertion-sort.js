@@ -11,4 +11,6 @@ export const insertionSort = list => {
             i--
         }
     }
+
+    return list
 }

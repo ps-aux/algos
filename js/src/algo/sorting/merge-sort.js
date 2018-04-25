@@ -1,5 +1,6 @@
-export const mergeSort = (array) => {
-    doMergeSort(array)
+export const mergeSort = list => {
+    doMergeSort(list)
+    return list
 }
 
 
@@ -14,6 +15,7 @@ const doMergeSort = (list,
     doMergeSort(list, aux, l, m)
     doMergeSort(list, aux, m, h)
     mergeArrays(list, aux, l, m, h)
+
 }
 
 

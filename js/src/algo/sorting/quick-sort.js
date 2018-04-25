@@ -14,6 +14,8 @@ export const quickSort = (list, l = 0, h = list.length) => {
 
     // After pivot
     quickSort(list, pivot + 1, h)
+
+    return list
 }
 
 export const partition = (list, l, h) => {

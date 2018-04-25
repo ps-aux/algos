@@ -15,8 +15,10 @@ export const list = (data = []) => {
     }
 
     data.steps = steps
-
     data.toArray = () => data.slice()
+
+    data.clone = () => list(data.toArray())
+
 
     return data
 }

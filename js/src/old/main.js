@@ -62,7 +62,7 @@ function getArrayFromModel(model) {
 
 function start() {
 
-    const sort = document.querySelector('input[name=sort]:checked')
+    const sort = document.querySelector('input[name=onSort]:checked')
     const sortFunction = sorts[sort.value]
 
     playTransformation(sortFunction)

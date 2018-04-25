@@ -18,4 +18,6 @@ export const selectionSort = list => {
         }
         return minIndex
     }
+
+    return list
 }

@@ -1,7 +1,7 @@
 import {partition} from 'src/algo/sorting/quick-sort'
 import {list} from 'src/algo/list'
 
-describe('quick-sort', () => {
+describe('quick-onSort', () => {
     describe('partition()', () => {
 
         it('basic case', () => {

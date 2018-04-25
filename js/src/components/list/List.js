@@ -1,65 +1,87 @@
 import React from 'react'
-import * as d3 from 'd3'
-import {prop, range} from 'ramda'
+import {compose, multiply, prop, range} from 'ramda'
 import './list.sass'
 import {list} from 'src/algo/list'
-import {bubbleSort} from 'src/algo/sorting/bubble-sort'
+import listRenderer from 'src/components/list/listRenderer'
+import {sorts} from 'src/algo/sorting'
+import {withStateHandlers} from 'recompose'
 
 const data = list([
-    8, 5, 2, 9, 4, 88, 1
-])
+    8, 5, 2, 9, 4, 8, 1, 20, 67, 67, 17
+].map(multiply(10)))
 
 const h = 500
 const w = 600
 
-
-const draw = (el, data) => {
-    const svg = d3.select(el)
-
-    const u = 10
-    const w = 20
-    const h = 100
-    const m = 10
-
-    const bars = svg.selectAll('rect')
-        .data(data)
-
-    bars.enter()
-        .append('rect')
-        .merge(bars)
-        .attrs((d, i) => ({
-            x: i * (w + m),
-            y: h - d * u,
-            height: d * u,
-            width: w
-        }))
-
-    bars.exit().remove()
-
-}
-
 const mount = el => {
-    draw(el, data)
-    const {steps} = bubbleSort(data)
-    console.log('steps are', steps)
-
-    const i = setInterval(() => {
-        const s = steps.shift()
-        if (!s) {
-            clearInterval(i)
-            return
-        }
-        draw(el, s)
-    }, 500)
 }
 
 
-const List = () => {
-    return <div className="list">
+const List = ({sorting, onSort, _ref}) =>
+    <div className="list">
+        {!sorting &&
+        <div>
+            {Object.entries(sorts)
+                .map(([k, v]) =>
+                    <button key={k}
+                            onClick={() => onSort(v)}>{k}</button>)}
+        </div>}
         This is list
-        <svg ref={el => el && mount(el)}
+        <svg ref={_ref}
              height={h} width={w}/>
     </div>
+
+const player = ({steps, playStep, tempo = 500, onDone}) => () => {
+    const play = () => {
+        const s = steps.shift()
+        if (!s)
+            return onDone()
+
+        playStep(s)
+        setTimeout(play, tempo)
+    }
+    play()
 }
 
-export default List
+class Cont extends React.Component {
+
+    ref = el => this.el = el
+    renderList
+
+    componentDidMount() {
+        this.renderList = listRenderer({el: this.el})
+        this.renderList(data)
+    }
+
+    onSort = sort => {
+        const {steps} = sort(data.clone())
+        const start = player({
+            steps,
+            playStep: this.renderList,
+            tempo: 200,
+            onDone: () => this.setState({sorting: false})
+        })
+
+        this.setState({sorting: true})
+        start()
+    }
+
+    render = () =>
+        <List {...this.props}
+              {...this.state}
+              onSort={this.onSort}
+              _ref={this.ref}/>
+
+}
+
+export default compose(
+    withStateHandlers(
+        {sorting: false},
+        {
+            sort: () => () => ({sorting: true}),
+            go: (_, {el}) => () => {
+                console.log('go')
+                el.addEventListener('click', () => console.log('ieeeeeeeee'))
+            }
+        }))
+(Cont)
