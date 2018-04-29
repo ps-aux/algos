@@ -1,12 +1,12 @@
 import React from 'react'
 import {compose, multiply, prop, range} from 'ramda'
 import './list.sass'
-import {list} from 'src/algo/list'
+import {List} from 'src/algo/list'
 import listRenderer from 'src/components/list/listRenderer'
 import {sorts} from 'src/algo/sorting'
 import {withStateHandlers} from 'recompose'
 
-const data = list([
+const data = List([
     8, 5, 2, 9, 4, 8, 1, 20, 67, 67, 17
 ].map(multiply(10)))
 

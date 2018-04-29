@@ -4,7 +4,7 @@ import assert from 'assert'
  * _Array on <l, h)
  */
 export const quickSort = (list, l = 0, h = list.length) => {
-    // _Array of 1 element or empty list is sorted
+    // _Array of 1 element or empty List is sorted
     if (h - l <= 1)
         return
 
@@ -21,7 +21,7 @@ export const quickSort = (list, l = 0, h = list.length) => {
 export const partition = (list, l, h) => {
     assert(l != null)
     assert(h != null)
-    // _Array of 1 element or empty list is partitioned
+    // _Array of 1 element or empty List is partitioned
     if (h - l <= 1)
         return
 
@@ -38,7 +38,7 @@ export const partition = (list, l, h) => {
             hi--
         assert(li !== hi)
         if (li < hi &&
-            li < h) // Do not swap if li is out of bounds (for every x in list  <= pivot )
+            li < h) // Do not swap if li is out of bounds (for every x in List  <= pivot )
             list.swap(li, hi)
     }
 

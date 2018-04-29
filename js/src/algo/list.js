@@ -5,7 +5,7 @@ const swap = (array, a, b) => {
 }
 
 
-export const list = (data = []) => {
+export const List = (data = []) => {
     data = data.slice()
     const steps = []
 
@@ -17,7 +17,7 @@ export const list = (data = []) => {
     data.steps = steps
     data.toArray = () => data.slice()
 
-    data.clone = () => list(data.toArray())
+    data.clone = () => List(data.toArray())
 
 
     return data
