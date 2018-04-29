@@ -7,34 +7,38 @@ import {sorts} from 'src/algo/sorting'
 import {withStateHandlers} from 'recompose'
 import {player} from 'src/algo/player'
 import {shuffle} from 'src/algo/shuffle'
+import Button from 'src/components/basic/Button'
+import s from './ButtonPanel.sass'
+import lVs from './ListView.sass'
 
 const data = shuffle(List(
-    range(0, 30).map(multiply(3))
+    range(0, 100).map(multiply(3))
 ))
 
-const h = 500
-const w = 600
+const h = 400
+const w = 1400
 
-const ListComp = ({sorting, onSort, _ref}) =>
-    <div className="list">
-        {!sorting &&
-        <div>
-            {Object.entries(sorts)
-                .map(([k, v]) =>
-                    <button key={k}
-                            onClick={() => onSort(v)}>{k}</button>)}
-        </div>}
-        This is list
-        <svg ref={_ref}
-             height={h} width={w}/>
+const ButtonPanel = ({sorts, onClick, enabled = true}) =>
+    <div className={s.buttonPanel}>
+        {Object.entries(sorts)
+            .map(([k, v]) =>
+                <Button key={k} label={k}
+                        enabled={enabled}
+                        onClick={() => onClick(v)}/>)}
     </div>
 
 
+const ListView = ({_ref}) =>
+    <div className={lVs.container}>
+        <svg ref={_ref}
+             height={h} width={w}/>
+    </div>
 
 class Cont extends React.Component {
 
     ref = el => this.el = el
     renderList
+    state = {sorting: false}
 
     componentDidMount() {
         this.renderList = listRenderer({el: this.el})
@@ -46,7 +50,7 @@ class Cont extends React.Component {
         const play = player({
             steps,
             playStep: this.renderList,
-            tempo: 20,
+            tempo: 5,
             onDone: () => this.setState({sorting: false})
         })
 
@@ -54,22 +58,17 @@ class Cont extends React.Component {
         play()
     }
 
-    render = () =>
-        <ListComp {...this.props}
-                  {...this.state}
-                  onSort={this.onSort}
-                  _ref={this.ref}/>
+    render = () => {
+        const {sorting} = this.state
+        return <div>
+            <ButtonPanel sorts={sorts}
+                         enabled={!sorting}
+                         onClick={this.onSort}/>
+            <ListView _ref={this.ref}/>
+        </div>
+    }
 
 }
 
-export default compose(
-    withStateHandlers(
-        {sorting: false},
-        {
-            sort: () => () => ({sorting: true}),
-            go: (_, {el}) => () => {
-                console.log('go')
-                el.addEventListener('click', () => console.log('ieeeeeeeee'))
-            }
-        }))
-(Cont)
+export default Cont
+

@@ -20,13 +20,16 @@ const config = {
                 loader: 'babel-loader'
             },
             {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader']
-            },
-            {
                 test: /\.sass$/,
                 exclude: /node_modules/,
-                loaders: ['style-loader', 'css-loader', 'sass-loader']
+                loaders: ['style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true
+                        }
+                    },
+                    'sass-loader']
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,

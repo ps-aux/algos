@@ -4,10 +4,12 @@ import './list.sass'
 
 const draw = (el, list,
               {
-                  height = 100, width = 30,
-                  margin = 10
+                  width = 10,
+                  margin = width / 5
               } = {}) => {
     const svg = d3.select(el)
+
+    const y = el.getAttribute('height')
 
 
     const bars = svg.selectAll('rect')
@@ -18,7 +20,7 @@ const draw = (el, list,
         .merge(bars)
         .attrs((d, i) => ({
             x: i * (width + margin),
-            y: height - d,
+            y: y - d,
             height: d,
             width
         }))
