@@ -5,19 +5,17 @@ import {List} from 'src/algo/list'
 import listRenderer from 'src/components/list/listRenderer'
 import {sorts} from 'src/algo/sorting'
 import {withStateHandlers} from 'recompose'
+import {player} from 'src/algo/player'
+import {shuffle} from 'src/algo/shuffle'
 
-const data = List([
-    8, 5, 2, 9, 4, 8, 1, 20, 67, 67, 17
-].map(multiply(10)))
+const data = shuffle(List(
+    range(0, 30).map(multiply(3))
+))
 
 const h = 500
 const w = 600
 
-const mount = el => {
-}
-
-
-const List = ({sorting, onSort, _ref}) =>
+const ListComp = ({sorting, onSort, _ref}) =>
     <div className="list">
         {!sorting &&
         <div>
@@ -31,17 +29,7 @@ const List = ({sorting, onSort, _ref}) =>
              height={h} width={w}/>
     </div>
 
-const player = ({steps, playStep, tempo = 500, onDone}) => () => {
-    const play = () => {
-        const s = steps.shift()
-        if (!s)
-            return onDone()
 
-        playStep(s)
-        setTimeout(play, tempo)
-    }
-    play()
-}
 
 class Cont extends React.Component {
 
@@ -55,22 +43,22 @@ class Cont extends React.Component {
 
     onSort = sort => {
         const {steps} = sort(data.clone())
-        const start = player({
+        const play = player({
             steps,
             playStep: this.renderList,
-            tempo: 200,
+            tempo: 20,
             onDone: () => this.setState({sorting: false})
         })
 
         this.setState({sorting: true})
-        start()
+        play()
     }
 
     render = () =>
-        <List {...this.props}
-              {...this.state}
-              onSort={this.onSort}
-              _ref={this.ref}/>
+        <ListComp {...this.props}
+                  {...this.state}
+                  onSort={this.onSort}
+                  _ref={this.ref}/>
 
 }
 

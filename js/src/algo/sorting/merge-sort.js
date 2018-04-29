@@ -1,3 +1,5 @@
+import {List} from 'src/algo/list'
+
 export const mergeSort = list => {
     doMergeSort(list)
     return list
@@ -5,7 +7,7 @@ export const mergeSort = list => {
 
 
 const doMergeSort = (list,
-                     aux = new Array(list.length),
+                     aux = List(new Array(list.length)),
                      l = 0, h = list.length) => {
     const len = h - l
     if (len < 2)
