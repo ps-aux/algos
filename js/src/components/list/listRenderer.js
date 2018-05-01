@@ -1,6 +1,5 @@
 import React from 'react'
 import * as d3 from 'd3'
-import './list.sass'
 
 const draw = (el, list,
               {
@@ -29,7 +28,7 @@ const draw = (el, list,
 
 }
 
-const create = ({el}) => {
+const create = (el) => {
     return data => draw(el, data)
 }
 
