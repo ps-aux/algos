@@ -4,6 +4,9 @@ import {clearSelection, render, select, switchNodes} from 'src/components/tree/t
 import * as d3 from 'd3'
 import {prop, range} from 'ramda'
 import Tree from 'src/components/tree/Tree'
+import './bst.global.sass'
+import Button from 'src/components/basic/Button'
+import HorizView from 'src/components/basic/HorizView'
 
 const treeActions = {
     select,
@@ -11,7 +14,7 @@ const treeActions = {
 }
 
 const btn = (name, action) =>
-    <button onClick={action}>{name}</button>
+    <Button onClick={action} label={name}/>
 
 
 const ranNum = (max = 100) =>
@@ -110,7 +113,6 @@ const addNodeButtons = (el, onClick) => {
 
 
 const Bst = () => {
-    let el
     let tree = bst().add(25).add(10).add(40)
     let draw
 
@@ -135,9 +137,9 @@ const Bst = () => {
         addNodeButtons(el, ({value}) => addNode(value))
     }
 
-    return <div className="d3">
+    return <div className="bst">
         <div className="control-panel">
-            <div className="buttons">
+            <HorizView>
                 {btn('Add node', () => {
                     addNode(ranNum())
                 })}
@@ -167,9 +169,8 @@ const Bst = () => {
                             })
                         }, 1000)
                     })}
-
-            </div>
-            <div className="new-nodes" ref={nodesBtns}
+            </HorizView>
+            <div className="new-nodes tree" ref={nodesBtns} // Hack with .tree to style as in tree
                  style={{
                      flexDirection: 'row'
                  }}>

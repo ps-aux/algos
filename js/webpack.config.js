@@ -21,7 +21,7 @@ const config = {
             },
             {
                 test: /\.sass$/,
-                exclude: /node_modules/,
+                exclude: [/node_modules/, /\.global.sass$/],
                 loaders: ['style-loader',
                     {
                         loader: 'css-loader',
@@ -30,6 +30,10 @@ const config = {
                         }
                     },
                     'sass-loader']
+            },
+            {
+                test: /\.global.sass$/,
+                loaders: ['style-loader', 'css-loader', 'sass-loader']
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,

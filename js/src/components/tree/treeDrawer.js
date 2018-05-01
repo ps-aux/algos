@@ -2,6 +2,7 @@ import {complement, pick, prop, propEq, tail} from 'ramda'
 import * as d3 from 'd3'
 import {CLEAR_SELECTION, RENDER, SELECT, SWITCH} from './treeActions'
 import {translate} from 'src/d3/utils'
+import s from './Tree.global.sass'
 
 
 const link = d3.linkVertical()
