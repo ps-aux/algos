@@ -54,7 +54,7 @@ const add = (n, value, {path = [0], steps = [], action = noopActions} = {}) => {
         }
 
 
-    steps.push(action.select(path))
+    // steps.push(action.select(path))
     const cp = {
         value: n.value,
         path: n.path,

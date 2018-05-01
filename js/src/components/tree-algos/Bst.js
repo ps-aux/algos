@@ -48,6 +48,7 @@ const sndTree = {
     ]
 }
 
+
 const addNodeButtons = (el, onClick) => {
 
     const _data = range(1, 50)
@@ -113,7 +114,7 @@ const addNodeButtons = (el, onClick) => {
 
 
 const Bst = () => {
-    let tree = bst().add(25).add(10).add(40)
+    let tree = bst()
     let draw
 
     const renderRef = _draw => {
@@ -127,7 +128,7 @@ const Bst = () => {
         tree = tree.add(val, {steps, action: treeActions})
         console.log('steps', steps)
         const s = [...steps, clearSelection(null, {duration: 0})]
-        draw(s)
+        // draw(s)
         draw(render(tree))
     }
 
