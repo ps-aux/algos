@@ -1,5 +1,6 @@
 import 'babel-polyfill'
 import './style/index.sass'
+import 'src/d3/config'
 import ReactDOM from 'react-dom'
 import React from 'react'
 import {BrowserRouter} from 'react-router-dom'
