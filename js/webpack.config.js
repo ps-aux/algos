@@ -4,11 +4,6 @@ const path = require('path')
 
 
 const config = {
-    entry: "./src/index.js",
-    output: {
-        path: path.resolve(__dirname, 'build'),
-        filename: "bundle.js"
-    },
     resolve: {
         modules: ['node_modules', path.resolve(__dirname)]
     },
@@ -52,8 +47,6 @@ const config = {
     ],
     devtool: 'inline-source-map',
     devServer: {
-        contentBase: './build',
-        // For browser history
         historyApiFallback: true
     }
 }
