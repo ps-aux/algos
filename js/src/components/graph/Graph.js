@@ -1,51 +1,13 @@
 import React from 'react'
 import s from './Graph.sass'
 import * as d3 from 'd3'
-import {data} from './data'
-import {range} from 'ramda'
-import cytoscape from 'cytoscape'
+import {path, prop, range} from 'ramda'
 import {NavMenuItem} from 'src/components/NavMenu'
 import {Menu} from 'semantic-ui-react'
 import Chance from 'chance'
 
 const chance = new Chance()
 
-let graph = {
-    nodes: [
-        {id: 1},
-        {id: 2},
-        {id: 3},
-        {id: 4},
-        {id: 5}
-    ],
-    links: [
-        {
-            source: 1,
-            value: 10,
-            target: 2
-        },
-        {
-            source: 2,
-            value: 1,
-            target: 3
-        },
-        {
-            source: 3,
-            value: 10,
-            target: 4
-        },
-        {
-            source: 4,
-            value: 50,
-            target: 5
-        },
-        {
-            source: 5,
-            value: 100,
-            target: 1
-        }
-    ]
-}
 
 const link = (n1, n2, value = 20) => ({
     source: n1.id,
@@ -84,223 +46,57 @@ const neighbours = (w, h, [x, y]) => {
 
 const tickCount = 100
 
-const onRef = el => {
-    if (!el)
-        return
 
-    var svg = d3.select(el),
-        width = +svg.attr("width"),
-        height = +svg.attr("height")
+const layout = (svg, graph) => {
 
-    var color = d3.scaleOrdinal(d3.schemeCategory20)
+    const width = svg.attr('width')
+    const height = svg.attr('height')
 
-    var simulation = d3.forceSimulation()
-        .force("link",
-            d3.forceLink())
-        .force("charge", d3.forceManyBody())
-        .force("center", d3.forceCenter(width / 2, height / 2))
-
-
-    var link = svg.append("g")
-        .attr("class", "links")
-        .selectAll("line")
-        .data(graph.links)
-        .enter().append("line")
-        .attr("stroke-width", function (d) {
-            return Math.sqrt(d.value)
-        })
+    return new Promise((resolve) => {
+        const simulation = d3.forceSimulation()
+            .alphaMin(1)
+            .force('link', d3.forceLink()
+                .id(d => d.id)
+                .distance(prop('value')) )
+            .force('charge', d3.forceManyBody())
+            .force('center', d3.forceCenter(width / 2, height / 2))
 
 
-    var node = svg.append("g")
-        .attr("class", "nodes")
-        .selectAll("circle")
-        .data(graph.nodes)
-        .enter().append("circle")
-        .attr("r", 5)
-        .attr("fill", function (d) {
-            return color(d.group)
-        })
-        .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended))
+        simulation.nodes(graph.nodes)
 
-    node.append("title")
-        .text(function (d) {
-            return d.id
-        })
+        simulation.force('link').links(graph.links)
 
-    simulation
-        .nodes(graph.nodes)
-        .on("tick", ticked)
+        simulation.on('end', resolve(graph))
 
-    simulation.force("link")
-        .links(graph.links)
-
-    function ticked() {
-        link
-            .attr("x1", function (d) {
-                return d.source.x
+        range(1, tickCount)
+            .forEach(() => {
+                simulation.tick()
             })
-            .attr("y1", function (d) {
-                return d.source.y
-            })
-            .attr("x2", function (d) {
-                return d.target.x
-            })
-            .attr("y2", function (d) {
-                return d.target.y
-            })
-
-        node
-            .attr("cx", function (d) {
-                return d.x
-            })
-            .attr("cy", function (d) {
-                return d.y
-            })
-    }
-
-
-    function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart()
-        d.fx = d.x
-        d.fy = d.y
-    }
-
-    function dragged(d) {
-        d.fx = d3.event.x
-        d.fy = d3.event.y
-    }
-
-    function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0)
-        d.fx = null
-        d.fy = null
-    }
-}
-
-
-const onRef2 = (el, graph, distance) => {
-    if (!el)
-        return
-
-    var svg = d3.select(el),
-        width = +svg.attr("width"),
-        height = +svg.attr("height")
-
-    var color = d3.scaleOrdinal(d3.schemeCategory20)
-
-    const layout = (graph) => {
-        return new Promise((resolve) => {
-            var simulation = d3
-                .forceSimulation()
-                .alphaMin(1)
-                .force("link", d3.forceLink()
-                    .id(d => d.id)
-                    .distance(d => d.value || distance)
-                )
-                .force("charge", d3.forceManyBody())
-                .force("center", d3.forceCenter(width / 2, height / 2))
-                .on("end", resolve(graph))
-
-
-            simulation.nodes(graph.nodes)
-
-            simulation.force("link").links(graph.links)
-
-            range(1, tickCount)
-                .forEach(() => {
-                    simulation.tick()
-                })
-        })
-    }
-    const render = (graph) => {
-
-        console.log('graph is', graph)
-        var link = svg.append("g")
-            .attr("class", "links")
-            .selectAll("line")
-            .data(graph.links)
-            .enter().append("line")
-            .attr("x1", function (d) {
-                return d.source.x
-            })
-            .attr("y1", function (d) {
-                return d.source.y
-            })
-            .attr("x2", function (d) {
-                return d.target.x
-            })
-            .attr("y2", function (d) {
-                return d.target.y
-            })
-
-        var node = svg.append("g")
-            .attr("class", "nodes")
-            .selectAll("circle")
-            .data(graph.nodes)
-            .enter().append("circle")
-            .attr("r", 5)
-            .attr("cx", function (d) {
-                return d.x
-            })
-            .attr("cy", function (d) {
-                return d.y
-            })
-            .attr("fill", function (d) {
-                return color(d.group)
-            })
-    }
-
-
-    layout(graph)
-        .then((graph) => render(graph))
-}
-
-
-const onRef3 = el => {
-    const elements = [ // list of graph elements to start with
-        { // node a
-            data: {id: 'a'}
-        },
-        { // node b
-            data: {id: 'b'}
-        },
-        { // edge ab
-            data: {id: 'ab', source: 'a', target: 'b'}
-        }
-    ]
-
-    cytoscape({
-        container: el,
-        elements,
-        style: [ // the stylesheet for the graph
-            {
-                selector: 'node',
-                style: {
-                    'background-color': '#666',
-                    'label': 'data(id)'
-                }
-            },
-
-            {
-                selector: 'edge',
-                style: {
-                    'width': 3,
-                    'line-color': '#ccc',
-                    'target-arrow-color': '#ccc',
-                    'target-arrow-shape': 'triangle'
-                }
-            }
-        ],
-        layout: {
-            name: 'grid',
-            rows: 1
-        }
     })
-
 }
+
+const render = (svg, graph) => {
+    svg.append('g')
+        .attr('class', 'links')
+        .selectAll('line')
+        .data(graph.links)
+        .enter().append('line')
+        .attr('x1', path(['source', 'x']))
+        .attr('y1', path(['source', 'y']))
+        .attr('x2', path(['target', 'x']))
+        .attr('y2', path(['target', 'y']))
+
+    svg.append('g')
+        .attr('class', 'nodes')
+        .selectAll('circle')
+        .data(graph.nodes)
+        .enter().append('circle')
+        .attr('r', 5)
+        .attr('cx', prop('x'))
+        .attr('cy', prop('y'))
+        .attr('fill', 'black')
+}
+
 
 const grid = (h, w) => {
 
@@ -312,9 +108,6 @@ const grid = (h, w) => {
         .map(([x, y]) => ({
             x, y, id: y * w + x
         }))
-    // Flower test
-    // const [first, ...rest] = nodes
-    // const links = rest.map(n => link(first, n))
 
     const links = pairs
         .flatMap(p =>
@@ -357,13 +150,16 @@ const ref = type => el => {
     if (!el)
         return
 
-    console.log('mounting', el)
+    const svg = d3.select(el)
     // Clear it
-    d3.select(el).selectAll('*').remove()
+    svg.selectAll('*').remove()
 
     const graph = (types[type] || types.grid)()
 
-    onRef2(el, graph, 200)
+
+    layout(svg, graph)
+        .then(l => render(svg, l))
+
 }
 
 const Graph = ({type}) =>

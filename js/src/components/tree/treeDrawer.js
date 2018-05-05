@@ -58,7 +58,7 @@ const node = ({nodes}, path) =>
         {children: [nodes[0]]}) // nodes[0] is the root node
 
 
-const selectCircle = c => c.style('fill', 'red')
+const selectCircle = c => c.style('fill', 'black')
 
 const deselectCirle = c => c.style('fill', 'white')
 
