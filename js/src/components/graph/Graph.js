@@ -6,7 +6,7 @@ import {range} from 'ramda'
 import cytoscape from 'cytoscape'
 
 
-const graph = {
+let graph = {
     nodes: [
         {id: 1},
         {id: 2},
@@ -17,22 +17,93 @@ const graph = {
     links: [
         {
             source: 1,
+            value: 10,
             target: 2
-        },
-        {
-            source: 1,
-            target: 2
-        },
-        {
-            source: 4,
-            target: 5
         },
         {
             source: 2,
+            value: 1,
             target: 3
+        },
+        {
+            source: 3,
+            value: 10,
+            target: 4
+        },
+        {
+            source: 4,
+            value: 50,
+            target: 5
+        },
+        {
+            source: 5,
+            value: 100,
+            target: 1
         }
     ]
 }
+
+const link = (n1, n2) => ({
+    source: n1.id,
+    target: n2.id,
+    value: 20
+})
+
+const find = (nodes, x, y) =>
+    nodes.find(n => n.x === x && n.y === y)
+
+const linkByCoords = (nodes, [x1, y1], [x2, y2]) =>
+    link(find(nodes, x1, y1), find(nodes, x2, y2))
+
+const neighbours = (w, h, [x, y]) => {
+    const res = []
+
+    // Left
+    if (x > 0)
+        res.push([x - 1, y])
+    // Right
+    if (x < w - h)
+        res.push([x + 1, y])
+    // Top
+    if (y > 0)
+        res.push([x, y - 1])
+    // Bottom
+    if (y < h - 1)
+        res.push([x, y + 1])
+
+    return res
+}
+
+const calcGraph = (h, w) => {
+
+    const pairs = range(0, h)
+        .flatMap(y => range(0, w)
+            .map(x => [x, y]))
+
+    const nodes = pairs
+        .map(([x, y]) => ({
+            x, y, id: y * w + x
+        }))
+
+
+    // Flower test
+    // const [first, ...rest] = nodes
+    // const links = rest.map(n => link(first, n))
+
+    const links = pairs
+        .flatMap(p =>
+            neighbours(w, h, p)
+                .map(n => [p, n]))
+        .map(([c1, c2]) => linkByCoords(nodes, c1, c2))
+
+
+    return {nodes, links}
+
+}
+
+graph = calcGraph(8, 8)
+
+const tickCount = 100
 
 const onRef = el => {
     if (!el)
@@ -45,9 +116,8 @@ const onRef = el => {
     var color = d3.scaleOrdinal(d3.schemeCategory20)
 
     var simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().id(function (d) {
-            return d.id
-        }))
+        .force("link",
+            d3.forceLink())
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2))
 
@@ -60,6 +130,7 @@ const onRef = el => {
         .attr("stroke-width", function (d) {
             return Math.sqrt(d.value)
         })
+
 
     var node = svg.append("g")
         .attr("class", "nodes")
@@ -132,6 +203,9 @@ const onRef = el => {
 
 
 const onRef2 = el => {
+    if (!el)
+        return
+
     var svg = d3.select(el),
         width = +svg.attr("width"),
         height = +svg.attr("height")
@@ -143,17 +217,20 @@ const onRef2 = el => {
             var simulation = d3
                 .forceSimulation()
                 .alphaMin(1)
-                .force("link", d3.forceLink().id(function (d) {
-                    return d.id
-                }))
+                .force("link", d3.forceLink()
+                    .id(d => d.id)
+                    .distance(d => d.value)
+                )
                 .force("charge", d3.forceManyBody())
                 .force("center", d3.forceCenter(width / 2, height / 2))
                 .on("end", resolve(graph))
 
+
             simulation.nodes(graph.nodes)
+
             simulation.force("link").links(graph.links)
 
-            range(1, 200)
+            range(1, tickCount)
                 .forEach(() => {
                     simulation.tick()
                 })
@@ -167,9 +244,6 @@ const onRef2 = el => {
             .selectAll("line")
             .data(graph.links)
             .enter().append("line")
-            .attr("stroke-width", function (d) {
-                return Math.sqrt(d.value)
-            })
             .attr("x1", function (d) {
                 return d.source.x
             })
@@ -251,11 +325,10 @@ const onRef3 = el => {
 
 const Graph = () =>
     <div className={s.container}>
-        {/*<svg width="960" height="600">*/}
-            {/*<g ref={onRef2} id="target" transform="translate(480, 300)">*/}
-            {/*</g>*/}
-        {/*</svg>*/}
-        <div ref={onRef3}/>
+        <svg width="960" height="600">
+            <g ref={onRef2} id="target" transform="translate(480, 300)">
+            </g>
+        </svg>
     </div>
 
 export default Graph

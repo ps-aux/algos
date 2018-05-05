@@ -7,6 +7,7 @@ import Tree from 'src/components/tree/Tree'
 import './bst.global.sass'
 import Button from 'src/components/basic/Button'
 import HorizView from 'src/components/basic/HorizView'
+import ButtonPanel from 'src/components/basic/ButtonPanel'
 
 const treeActions = {
     select,
@@ -72,7 +73,7 @@ const addNodeButtons = (el, onClick) => {
             .attrs({
                 height: size,
                 lidth: size,
-                viewBox: `0 0 ${size/1} ${size/1}`
+                viewBox: `0 0 ${size / 1} ${size / 1}`
             })
             .classed('node', true)
             .classed('btn', true)
@@ -138,39 +139,50 @@ const Bst = () => {
         addNodeButtons(el, ({value}) => addNode(value))
     }
 
+    const actions = [
+        {
+            label: 'Add node',
+            run: () => addNode(ranNum())
+        },
+        {
+            label: 'Select',
+            run: () =>
+                draw([
+                    select([0], {duration: 2000}),
+                    select([0, 0], {duration: 2000}),
+                    select([0, 1], {duration: 2000})
+                ])
+        },
+        {
+            label: 'Switch 1 <-> 2',
+            run: () =>
+                draw([
+                    switchNodes({src: [0, 0], dst: [0, 1]}),
+                    render(sndTree)
+                ])
+        },
+        {
+            label: 'Move',
+            run: () => {
+                const nodes = []
+                tree.visit(n => nodes.push(n))
+                const redraw = draw(tree, switchNodes(nodes[1], nodes[2]))
+                setTimeout(() => {
+                    redraw(dNodes => {
+                        // dNodes[3].selected = true
+                        // switchNodes(nodes[0], nodes[3])(dNodes)
+                    })
+
+                })
+            }
+        }
+
+    ]
+
     return <div className="bst">
         <div className="control-panel">
-            <HorizView>
-                {btn('Add node', () => {
-                    addNode(ranNum())
-                })}
-                {btn('Select', () => {
-                    draw([
-                        select([0], {duration: 2000}),
-                        select([0, 0], {duration: 2000}),
-                        select([0, 1], {duration: 2000})
-                    ])
-                })}
-                {btn('Switch 1 <-> 2', () => {
-                    draw([
-                        switchNodes({src: [0, 0], dst: [0, 1]}),
-                        render(sndTree)
-                    ])
-                })}
-
-                {btn('move',
-                    () => {
-                        const nodes = []
-                        tree.visit(n => nodes.push(n))
-                        const redraw = draw(tree, switchNodes(nodes[1], nodes[2]))
-                        setTimeout(() => {
-                            redraw(dNodes => {
-                                // dNodes[3].selected = true
-                                // switchNodes(nodes[0], nodes[3])(dNodes)
-                            })
-                        }, 1000)
-                    })}
-            </HorizView>
+            <ButtonPanel actions={actions}
+                         onClick={a => a.run()}/>
             <div className="new-nodes tree" ref={nodesBtns} // Hack with .tree to style as in tree
                  style={{
                      flexDirection: 'row'

@@ -4,25 +4,19 @@ import {List} from 'src/algo/list'
 import {sorts} from 'src/algo/sorting/index'
 import {player} from 'src/algo/player'
 import {shuffle} from 'src/algo/shuffle'
-import Button from 'src/components/basic/Button'
-import s from './ButtonPanel.sass'
 import ListView from 'src/components/list/List'
+import View from 'src/components/basic/View'
+import ButtonPanel from 'src/components/basic/ButtonPanel'
 
 const data = shuffle(List(
     range(0, 100).map(multiply(3))
 ))
 
-const h = 400
-const w = 1400
-
-const ButtonPanel = ({sorts, onClick, enabled = true}) =>
-    <div className={s.buttonPanel}>
-        {Object.entries(sorts)
-            .map(([k, v]) =>
-                <Button key={k} label={k}
-                        enabled={enabled}
-                        onClick={() => onClick(v)}/>)}
-    </div>
+const sortActions = Object.entries(sorts)
+    .map(([k, v]) => ({
+        label: k,
+        sort: v
+    }))
 
 class Sorting extends React.Component {
 
@@ -36,7 +30,7 @@ class Sorting extends React.Component {
         this.renderList(data)
     }
 
-    onSort = sort => {
+    onSort = ({sort}) => {
         const {steps} = sort(data.clone())
         const play = player({
             steps,
@@ -51,12 +45,12 @@ class Sorting extends React.Component {
 
     render = () => {
         const {sorting} = this.state
-        return <div>
-            <ButtonPanel sorts={sorts}
+        return <View>
+            <ButtonPanel actions={sortActions}
                          enabled={!sorting}
                          onClick={this.onSort}/>
             <ListView rendererRef={this.onRenderer}/>
-        </div>
+        </View>
     }
 
 }
