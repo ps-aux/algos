@@ -4,7 +4,11 @@ import * as d3 from 'd3'
 import {data} from './data'
 import {range} from 'ramda'
 import cytoscape from 'cytoscape'
+import {NavMenuItem} from 'src/components/NavMenu'
+import {Menu} from 'semantic-ui-react'
+import Chance from 'chance'
 
+const chance = new Chance()
 
 let graph = {
     nodes: [
@@ -43,17 +47,20 @@ let graph = {
     ]
 }
 
-const link = (n1, n2) => ({
+const link = (n1, n2, value = 20) => ({
     source: n1.id,
     target: n2.id,
-    value: 20
+    value
 })
 
 const find = (nodes, x, y) =>
     nodes.find(n => n.x === x && n.y === y)
 
-const linkByCoords = (nodes, [x1, y1], [x2, y2]) =>
-    link(find(nodes, x1, y1), find(nodes, x2, y2))
+const linkByCoords = (nodes, [x1, y1], [x2, y2], ...rest) =>
+    link(
+        find(nodes, x1, y1),
+        find(nodes, x2, y2),
+        ...rest)
 
 const neighbours = (w, h, [x, y]) => {
     const res = []
@@ -74,34 +81,6 @@ const neighbours = (w, h, [x, y]) => {
     return res
 }
 
-const calcGraph = (h, w) => {
-
-    const pairs = range(0, h)
-        .flatMap(y => range(0, w)
-            .map(x => [x, y]))
-
-    const nodes = pairs
-        .map(([x, y]) => ({
-            x, y, id: y * w + x
-        }))
-
-
-    // Flower test
-    // const [first, ...rest] = nodes
-    // const links = rest.map(n => link(first, n))
-
-    const links = pairs
-        .flatMap(p =>
-            neighbours(w, h, p)
-                .map(n => [p, n]))
-        .map(([c1, c2]) => linkByCoords(nodes, c1, c2))
-
-
-    return {nodes, links}
-
-}
-
-graph = calcGraph(8, 8)
 
 const tickCount = 100
 
@@ -202,7 +181,7 @@ const onRef = el => {
 }
 
 
-const onRef2 = el => {
+const onRef2 = (el, graph, distance) => {
     if (!el)
         return
 
@@ -219,7 +198,7 @@ const onRef2 = el => {
                 .alphaMin(1)
                 .force("link", d3.forceLink()
                     .id(d => d.id)
-                    .distance(d => d.value)
+                    .distance(d => d.value || distance)
                 )
                 .force("charge", d3.forceManyBody())
                 .force("center", d3.forceCenter(width / 2, height / 2))
@@ -239,7 +218,7 @@ const onRef2 = el => {
     const render = (graph) => {
 
         console.log('graph is', graph)
-        var link = d3.select("#target").append("g")
+        var link = svg.append("g")
             .attr("class", "links")
             .selectAll("line")
             .data(graph.links)
@@ -257,7 +236,7 @@ const onRef2 = el => {
                 return d.target.y
             })
 
-        var node = d3.select("#target").append("g")
+        var node = svg.append("g")
             .attr("class", "nodes")
             .selectAll("circle")
             .data(graph.nodes)
@@ -323,10 +302,79 @@ const onRef3 = el => {
 
 }
 
-const Graph = () =>
+const grid = (h, w) => {
+
+    const pairs = range(0, h)
+        .flatMap(y => range(0, w)
+            .map(x => [x, y]))
+
+    const nodes = pairs
+        .map(([x, y]) => ({
+            x, y, id: y * w + x
+        }))
+    // Flower test
+    // const [first, ...rest] = nodes
+    // const links = rest.map(n => link(first, n))
+
+    const links = pairs
+        .flatMap(p =>
+            neighbours(w, h, p)
+                .map(n => [p, n]))
+        .map(([c1, c2]) => linkByCoords(nodes, c1, c2, 4))
+
+
+    return {nodes, links}
+
+}
+
+const radial = count => {
+    const nodes = range(0, count).map(id => ({id}))
+    const [first, ...rest] = nodes
+    const links = rest.map(n => link(first, n, 100))
+    return {nodes, links}
+}
+
+
+const random = (nodeCount, linkCount) => {
+    const nodes = range(0, nodeCount).map(id => ({id}))
+
+    const rand = () => chance.integer({min: 0, max: nodes.length - 1})
+
+    const links = range(0, linkCount)
+        .map(() => link(nodes[rand()], nodes[rand()]))
+
+    return {nodes, links}
+}
+
+
+const types = {
+    grid: () => grid(8, 8),
+    random: () => random(10, 10),
+    radial: () => radial(30)
+}
+
+const ref = type => el => {
+    if (!el)
+        return
+
+    console.log('mounting', el)
+    // Clear it
+    d3.select(el).selectAll('*').remove()
+
+    const graph = (types[type] || types.grid)()
+
+    onRef2(el, graph, 200)
+}
+
+const Graph = ({type}) =>
     <div className={s.container}>
+        <Menu>
+            <NavMenuItem name="Grid" path="grid"/>
+            <NavMenuItem name="Radial" path="radial"/>
+            <NavMenuItem name="Random" path="random"/>
+        </Menu>
         <svg width="960" height="600">
-            <g ref={onRef2} id="target" transform="translate(480, 300)">
+            <g ref={ref(type)} id="target" transform="translate(480, 300)">
             </g>
         </svg>
     </div>

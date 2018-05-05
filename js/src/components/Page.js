@@ -8,10 +8,10 @@ import {Header} from 'semantic-ui-react'
 const Page = ({path, title, component: Component}) =>
     <Route path={path}
            key={path}
-           render={() =>
+           render={({match}) =>
                <View className={s.root}>
                    <Header as="h1">{title}</Header>
-                   <Component/>
+                   <Component {...match.params}/>
                </View>
            }/>
 
