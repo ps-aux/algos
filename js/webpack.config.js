@@ -59,7 +59,7 @@ const config = {
             template: 'public/index.html'
         })
     ],
-    devtool: 'inline-source-map',
+    // devtool: 'inline-source-map',
     devServer: {
         historyApiFallback: true
     }
