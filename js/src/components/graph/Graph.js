@@ -9,12 +9,14 @@ import graphRenderer from './renderer'
 import Button from 'src/components/basic/Button'
 import View from 'src/components/basic/View'
 
+const linkStyle = s.link
 const chance = new Chance()
 
 
-const link = (n1, n2, value = 20) => ({
+const link = (n1, n2, {value = 20, id} = {}) => ({
     source: n1.id,
     target: n2.id,
+    id: id || (n1.id + '#' + n2.id),
     value
 })
 
@@ -71,7 +73,7 @@ const grid = (h, w) => {
 const radial = count => {
     const nodes = range(0, count).map(id => ({id}))
     const [first, ...rest] = nodes
-    const links = rest.map(n => link(first, n, 100))
+    const links = rest.map(n => link(first, n, {value: 100}))
     return {nodes, links}
 }
 
@@ -81,8 +83,9 @@ const random = (nodeCount, linkCount) => {
 
     const rand = () => chance.integer({min: 0, max: nodes.length - 1})
 
+    let c = 0
     const links = range(0, linkCount)
-        .map(() => link(nodes[rand()], nodes[rand()]))
+        .map(() => link(nodes[rand()], nodes[rand()], {id: c++}))
 
     return {nodes, links}
 }
@@ -95,21 +98,51 @@ const types = {
 }
 
 const calcGraph = type => {
-    const graph = (types[type] || types.grid)()
+    const graph = types[type]()
     graph.nodes[0].selected = true
     graph.links[0].selected = true
     return graph
 }
 
+const layout = (graph, {height, width}) => {
+    const simulation = d3.forceSimulation()
+        .alphaMin(1)
+        .force('link', d3.forceLink()
+            .id(d => d.id)
+            .distance(prop('value')))
+        .force('charge', d3.forceManyBody())
+        .force('center', d3.forceCenter(width / 2, height / 2))
+
+
+    simulation.nodes(graph.nodes)
+
+    simulation.force('link').links(graph.links)
+
+    range(1, 100)
+        .forEach(() => {
+            simulation.tick()
+        })
+
+    return graph
+}
+
+
+const Node = ({x, y, r = 5}) =>
+    <circle cx={x} cy={y} r={r}/>
+
+const Link = ({source: s, target: t}) =>
+    <line x1={s.x} y1={s.y}
+          className={linkStyle}
+          x2={t.x} y2={t.y}/>
+
+
+const Collection = ({items, comp: Comp, id = i => i.id}) =>
+    items.map(i =>
+        <Comp {...i} key={id(i)}/>)
+
 class Graph extends React.Component {
 
-    onRef = el => {
-        this.el = el
-        if (!el)
-            return
-
-        this.setGraph(this.props.type, el)
-    }
+    state = {}
 
     setGraph = (type, el) => {
         const svg = d3.select(el)
@@ -128,12 +161,16 @@ class Graph extends React.Component {
         this.type = type
     }
 
-    componentDidUpdate() {
-        const {type} = this.props
-        if (type === this.type)
-            return
+    static getDerivedStateFromProps(p, s) {
+        const {type = 'grid'} = p
+        if (type === s.type)
+            return null
 
-        this.setGraph(type, this.el)
+        return {
+            type,
+            graph: layout(calcGraph(type), {height: 600, width: 960})
+        }
+
     }
 
     getSelection = () => {
@@ -143,6 +180,7 @@ class Graph extends React.Component {
 
 
     render() {
+        const {graph: {nodes, links}} = this.state
         return <View>
             <Menu>
                 <NavMenuItem name="Grid" path="grid"/>
@@ -151,8 +189,8 @@ class Graph extends React.Component {
             </Menu>
             <Button label="Path" onClick={this.getSelection}/>
             <svg width="960" height="600">
-                <g ref={this.onRef} id="target" transform="translate(480, 300)">
-                </g>
+                <Collection comp={Link} items={links}/>
+                <Collection comp={Node} items={nodes}/>
             </svg>
         </View>
 

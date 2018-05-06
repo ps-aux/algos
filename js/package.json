@@ -7,7 +7,7 @@
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test": "jest --watchAll",
     "build": "webpack",
-    "deploy":"npm run build && firebase deploy --only hosting"
+    "deploy": "npm run build && firebase deploy --only hosting"
   },
   "author": "",
   "license": "ISC",
@@ -23,8 +23,8 @@
     "d3-selection-multi": "^1.0.1",
     "faker": "^4.1.0",
     "ramda": "^0.25.0",
-    "react": "^16.3.0",
-    "react-dom": "^16.0.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "recompose": "^0.27.0",
