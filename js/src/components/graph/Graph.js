@@ -6,6 +6,8 @@ import {NavMenuItem} from 'src/components/NavMenu'
 import {Menu} from 'semantic-ui-react'
 import Chance from 'chance'
 import graphRenderer from './renderer'
+import Button from 'src/components/basic/Button'
+import View from 'src/components/basic/View'
 
 const chance = new Chance()
 
@@ -92,37 +94,69 @@ const types = {
     radial: () => radial(30)
 }
 
-const ref = type => el => {
-    if (!el)
-        return
-
-
-    // TODO remove dependency on d3 use vanilla JS
-    const svg = d3.select(el)
-    // Clear it
-    svg.selectAll('*').remove()
-
+const calcGraph = type => {
     const graph = (types[type] || types.grid)()
-
-    const render = graphRenderer(el)
-
     graph.nodes[0].selected = true
     graph.links[0].selected = true
-
-    render(graph)
+    return graph
 }
 
-const Graph = ({type}) =>
-    <div className={s.container}>
-        <Menu>
-            <NavMenuItem name="Grid" path="grid"/>
-            <NavMenuItem name="Radial" path="radial"/>
-            <NavMenuItem name="Random" path="random"/>
-        </Menu>
-        <svg width="960" height="600">
-            <g ref={ref(type)} id="target" transform="translate(480, 300)">
-            </g>
-        </svg>
-    </div>
+class Graph extends React.Component {
+
+    onRef = el => {
+        this.el = el
+        if (!el)
+            return
+
+        this.setGraph(this.props.type, el)
+    }
+
+    setGraph = (type, el) => {
+        const svg = d3.select(el)
+        // Clear it
+        svg.selectAll('*').remove()
+        this.graph = calcGraph(type)
+
+        const render = graphRenderer(el, {
+            onNodeClick: n => {
+                n.selected = !n.selected
+                this.renderGraph()
+            }
+        })
+        this.renderGraph = () => render(this.graph)
+        this.renderGraph()
+        this.type = type
+    }
+
+    componentDidUpdate() {
+        const {type} = this.props
+        if (type === this.type)
+            return
+
+        this.setGraph(type, this.el)
+    }
+
+    getSelection = () => {
+        this.graph.nodes.forEach(n => n.selectable = true)
+        this.renderGraph()
+    }
+
+
+    render() {
+        return <View>
+            <Menu>
+                <NavMenuItem name="Grid" path="grid"/>
+                <NavMenuItem name="Radial" path="radial"/>
+                <NavMenuItem name="Random" path="random"/>
+            </Menu>
+            <Button label="Path" onClick={this.getSelection}/>
+            <svg width="960" height="600">
+                <g ref={this.onRef} id="target" transform="translate(480, 300)">
+                </g>
+            </svg>
+        </View>
+
+    }
+}
 
 export default Graph

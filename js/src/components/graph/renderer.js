@@ -30,6 +30,7 @@ const layout = (graph, {height, width}) =>
 
 const link = sel =>
     sel.append('line')
+        .classed(s.link, true)
         .attrs({
             x1: path(['source', 'x']),
             y1: path(['source', 'y']),
@@ -38,7 +39,7 @@ const link = sel =>
         })
         .call(setSelected)
 
-const node = sel =>
+const node = (sel, {onNodeClick}) =>
     sel.append('circle')
         .classed(s.node, true)
         .attrs({
@@ -48,15 +49,7 @@ const node = sel =>
         })
         .call(setSelected)
         .call(setSelectable)
-        .call(s => s.on('click',
-            function (d) {
-                if (d.selectable) {
-                    console.log('is selectable')
-                    d.selected = !d.selected
-                    setSelected(d3.select(this))
-                }
-            }
-        ))
+        .call(s => s.on('click', onNodeClick))
 
 
 const setSelected = s =>
@@ -65,40 +58,39 @@ const setSelected = s =>
 const setSelectable = s =>
     s.classed('selectable', prop('selectable'))
 
-const doRender = (el, layout) => {
+const doRender = (el, layout, opts) => {
     const svg = d3.select(el)
 
     const {links, nodes} = layout
-    svg.append('g')
-        .attr('class', 'links')
-        .selectAll('line')
+
+    svg.selectAll('line')
         .data(links)
         .enter()
-        .call(link)
+        .call(link, opts)
 
-    svg.append('g')
-        .attr('class', 'nodes')
-        .classed('nodes', true)
-        .selectAll('circle')
+
+    const old = svg.selectAll('circle')
         .data(nodes)
-        .enter()
-        .call(node)
+
+    old.enter().call(node, opts)
+
+    old.call(setSelected)
+        .call(setSelectable)
+
 }
 
 
-const selectable = true
-const render = (el, data) => {
+const render = (el, data, opts) => {
     const width = el.getAttribute('width')
     const height = el.getAttribute('height')
 
-    data.nodes.forEach(n => n.selectable = selectable)
     // Data is actually modified...but we don't care for now
     layout(data, {width, height})
-        .then(layout => doRender(el, layout))
+        .then(layout => doRender(el, layout, opts))
 }
 
 
-const renderer = el =>
-    (...args) => render(el, ...args)
+const renderer = (el, opts = {}) =>
+    data => render(el, data, opts)
 
 export default renderer
