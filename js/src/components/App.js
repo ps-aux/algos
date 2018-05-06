@@ -39,9 +39,13 @@ const App = () =>
     <View className="app">
         <Menu fixed="top">
             {pages.map(({title, path, link}) =>
-                <NavMenuItem name={title} path={link || path}/>)}
+                <NavMenuItem name={title}
+                             key={link || path}
+                             path={link || path}/>)}
         </Menu>
-        {pages.map(p => <Page {...p}/>)}
+        {pages.map(p => <Page
+            key={p.path}
+            {...p}/>)}
     </View>
 
 export default App

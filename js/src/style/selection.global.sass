@@ -1,0 +1,13 @@
+.selected
+  @at-root
+    circle#{&}
+      fill: $selected-color
+    line#{&}
+      stroke: $selected-color
+
+.selectable
+  &:hover
+    cursor: pointer
+    @at-root
+      circle#{&}
+        stroke: $selected-color

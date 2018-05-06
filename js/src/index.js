@@ -1,5 +1,5 @@
 import 'babel-polyfill'
-import './style/index.sass'
+import './style/index.global.sass'
 import 'src/d3/config'
 import 'semantic-ui-css/semantic.min.css'
 import ReactDOM from 'react-dom'

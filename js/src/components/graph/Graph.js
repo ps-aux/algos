@@ -5,6 +5,7 @@ import {path, prop, range} from 'ramda'
 import {NavMenuItem} from 'src/components/NavMenu'
 import {Menu} from 'semantic-ui-react'
 import Chance from 'chance'
+import graphRenderer from './renderer'
 
 const chance = new Chance()
 
@@ -42,61 +43,6 @@ const neighbours = (w, h, [x, y]) => {
 
     return res
 }
-
-
-const tickCount = 100
-
-
-const layout = (svg, graph) => {
-
-    const width = svg.attr('width')
-    const height = svg.attr('height')
-
-    return new Promise((resolve) => {
-        const simulation = d3.forceSimulation()
-            .alphaMin(1)
-            .force('link', d3.forceLink()
-                .id(d => d.id)
-                .distance(prop('value')) )
-            .force('charge', d3.forceManyBody())
-            .force('center', d3.forceCenter(width / 2, height / 2))
-
-
-        simulation.nodes(graph.nodes)
-
-        simulation.force('link').links(graph.links)
-
-        simulation.on('end', resolve(graph))
-
-        range(1, tickCount)
-            .forEach(() => {
-                simulation.tick()
-            })
-    })
-}
-
-const render = (svg, graph) => {
-    svg.append('g')
-        .attr('class', 'links')
-        .selectAll('line')
-        .data(graph.links)
-        .enter().append('line')
-        .attr('x1', path(['source', 'x']))
-        .attr('y1', path(['source', 'y']))
-        .attr('x2', path(['target', 'x']))
-        .attr('y2', path(['target', 'y']))
-
-    svg.append('g')
-        .attr('class', 'nodes')
-        .selectAll('circle')
-        .data(graph.nodes)
-        .enter().append('circle')
-        .attr('r', 5)
-        .attr('cx', prop('x'))
-        .attr('cy', prop('y'))
-        .attr('fill', 'black')
-}
-
 
 const grid = (h, w) => {
 
@@ -150,16 +96,20 @@ const ref = type => el => {
     if (!el)
         return
 
+
+    // TODO remove dependency on d3 use vanilla JS
     const svg = d3.select(el)
     // Clear it
     svg.selectAll('*').remove()
 
     const graph = (types[type] || types.grid)()
 
+    const render = graphRenderer(el)
 
-    layout(svg, graph)
-        .then(l => render(svg, l))
+    graph.nodes[0].selected = true
+    graph.links[0].selected = true
 
+    render(graph)
 }
 
 const Graph = ({type}) =>

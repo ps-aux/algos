@@ -27,11 +27,22 @@ const config = {
                             modules: true
                         }
                     },
-                    'sass-loader']
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            data: '@import "src/style/imports"'
+                        }
+                    }]
             },
             {
                 test: /\.global.sass$/,
-                loaders: ['style-loader', 'css-loader', 'sass-loader']
+                loaders: ['style-loader', 'css-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            data: '@import "src/style/imports"'
+                        }
+                    }]
             },
             {
                 test: /\.css$/,
