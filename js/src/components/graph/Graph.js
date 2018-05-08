@@ -1,5 +1,5 @@
 import React from 'react'
-import s from './Graph.sass'
+import stl from './Graph.sass'
 import * as d3 from 'd3'
 import {path, prop, range} from 'ramda'
 import {NavMenuItem} from 'src/components/NavMenu'
@@ -8,8 +8,11 @@ import Chance from 'chance'
 import graphRenderer from './renderer'
 import Button from 'src/components/basic/Button'
 import View from 'src/components/basic/View'
+import c from 'classnames'
+import bfs from 'src/algo/graph/bfs'
+import Collection from 'src/components/basic/Collection'
 
-const linkStyle = s.link
+const linkStyle = stl.link
 const chance = new Chance()
 
 
@@ -98,10 +101,17 @@ const types = {
 }
 
 const calcGraph = type => {
-    const graph = types[type]()
-    graph.nodes[0].selected = true
-    graph.links[0].selected = true
-    return graph
+    const {nodes, links} = types[type]()
+
+
+    // Add indexes
+    return {
+        nodes: nodes.map((n, index) =>
+            ({...n, index})),
+
+        links: links.map((n, index) =>
+            ({...n, index}))
+    }
 }
 
 const layout = (graph, {height, width}) => {
@@ -127,38 +137,40 @@ const layout = (graph, {height, width}) => {
 }
 
 
-const Node = ({x, y, r = 5}) =>
-    <circle cx={x} cy={y} r={r}/>
+const createClass = (...stls) => {
+    const itemStls = stls.reduce((a, s) => (a[s] = true, a), {})
+    return ({selectable, selected}) =>
+        c(({
+            selectable,
+            selected,
+            ...itemStls
+        }))
+}
 
-const Link = ({source: s, target: t}) =>
+
+const nodeClass = createClass(stl.node)
+
+const linkClass = createClass(stl.link)
+
+const Node = ({x, y, r = 5, onClick, ...rest}) =>
+    <circle cx={x} cy={y} r={r}
+            className={nodeClass(rest)}
+            onClick={onClick}/>
+
+const Link = ({source: s, target: t, onClick, ...rest}) =>
     <line x1={s.x} y1={s.y}
-          className={linkStyle}
+          onClick={onClick}
+          className={linkClass(rest)}
           x2={t.x} y2={t.y}/>
 
 
-const Collection = ({items, comp: Comp, id = i => i.id}) =>
-    items.map(i =>
-        <Comp {...i} key={id(i)}/>)
+
 
 class Graph extends React.Component {
 
-    state = {}
-
-    setGraph = (type, el) => {
-        const svg = d3.select(el)
-        // Clear it
-        svg.selectAll('*').remove()
-        this.graph = calcGraph(type)
-
-        const render = graphRenderer(el, {
-            onNodeClick: n => {
-                n.selected = !n.selected
-                this.renderGraph()
-            }
-        })
-        this.renderGraph = () => render(this.graph)
-        this.renderGraph()
-        this.type = type
+    state = {
+        selecting: false,
+        selection: null
     }
 
     static getDerivedStateFromProps(p, s) {
@@ -166,32 +178,120 @@ class Graph extends React.Component {
         if (type === s.type)
             return null
 
+        const graph = layout(calcGraph(type), {height: 600, width: 960})
         return {
             type,
-            graph: layout(calcGraph(type), {height: 600, width: 960})
+            nodes: graph.nodes,
+            links: graph.links
         }
 
     }
 
-    getSelection = () => {
-        this.graph.nodes.forEach(n => n.selectable = true)
-        this.renderGraph()
+
+    startSelecting = () => {
+        const {nodes, links} = this.state
+
+        // Clear previous selection
+        nodes.forEach(n => n.selected = false)
+        links.forEach(n => n.selected = false)
+        this.setState({
+            nodes,
+            links,
+            selecting: true,
+            selection: {
+                from: null,
+                to: null
+            }
+        })
     }
 
+    onNodeSelect = n => {
+        this.markSelected(n)
+        const {selection: sel} = this.state
+
+
+        if (!sel.from)
+            sel.from = n
+        else if (!sel.to)
+            sel.to = n
+
+        if (sel.to && sel.from) {
+            const from = sel.from.id
+            const to = sel.to.id
+            const {links, nodes} = this.state
+            const p = bfs({
+                nodes,
+                links: links.map(l => ({
+                    source: l.source.id,
+                    target: l.target.id
+                }))
+            }, from, to)
+
+
+            p.forEach(n => n.selected = true)
+
+            let n = p.pop()
+            while (p.length > 1) {
+                let prev = p.pop()
+
+                console.log('to', n, 'from', prev)
+                const l = links.find(l =>
+                    l.source === prev && l.target === n ||
+                    l.target === prev && l.source === n
+                )
+                if (!l) {
+                    console.log(links)
+                    console.log(links.filter(l => l.source === prev))
+                }
+                l.selected = true
+
+                n = prev
+            }
+
+
+            this.setState({
+                nodes: this.state.nodes,
+                selection: null,
+                selecting: false
+            })
+        }
+
+        this.setState({
+            nodes: this.state.nodes,
+            selection: sel
+        })
+
+    }
+
+    markSelected = (...ns) => {
+        const {nodes} = this.state
+        ns.forEach(n =>
+            nodes[n.index].selected = !n.selected)
+
+    }
 
     render() {
-        const {graph: {nodes, links}} = this.state
+        const {nodes, links, selecting, selection} = this.state
         return <View>
             <Menu>
                 <NavMenuItem name="Grid" path="grid"/>
                 <NavMenuItem name="Radial" path="radial"/>
                 <NavMenuItem name="Random" path="random"/>
             </Menu>
-            <Button label="Path" onClick={this.getSelection}/>
+            <Button label="Path" onClick={this.startSelecting}/>
             <svg width="960" height="600">
-                <Collection comp={Link} items={links}/>
-                <Collection comp={Node} items={nodes}/>
+                <Collection comp={Link}
+                            items={links}/>
+                <Collection comp={Node} items={nodes}
+                            props={{
+                                onClick: selecting && this.onNodeSelect,
+                                selectable: selecting
+                            }}
+                />
             </svg>
+            {selecting && <View>
+                Pick a {selection.from ? 'target' : 'source'} node
+            </View>}
         </View>
 
     }

@@ -129,7 +129,7 @@ const Bst = () => {
         tree = tree.add(val, {steps, action: treeActions})
         console.log('steps', steps)
         const s = [...steps, clearSelection(null, {duration: 0})]
-        // draw(s)
+        // draw(stl)
         draw(render(tree))
     }
 

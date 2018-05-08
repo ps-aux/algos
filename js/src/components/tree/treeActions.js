@@ -4,7 +4,7 @@ export const RENDER = 'redraw'
 
 export const SELECT = 'select-node'
 
-export const CLEAR_SELECTION = 'clear-selection'
+export const CLEAR_SELECTION = 'clear-sel'
 
 export const SWITCH = 'switch-nodes'
 

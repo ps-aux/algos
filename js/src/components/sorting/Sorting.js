@@ -20,22 +20,17 @@ const sortActions = Object.entries(sorts)
 
 class Sorting extends React.Component {
 
-    state = {sorting: false}
-
-    onRenderer = render => {
-        this.renderList = render
-    }
-
-    componentDidMount() {
-        this.renderList(data)
+    state = {
+        sorting: false,
+        items: data
     }
 
     onSort = ({sort}) => {
         const {steps} = sort(data.clone())
         const play = player({
             steps,
-            playStep: this.renderList,
-            tempo: 5,
+            playStep: items => this.setState({items}),
+            tempo: 1,
             onDone: () => this.setState({sorting: false})
         })
 
@@ -44,12 +39,12 @@ class Sorting extends React.Component {
     }
 
     render = () => {
-        const {sorting} = this.state
+        const {sorting, items} = this.state
         return <View>
             <ButtonPanel actions={sortActions}
                          enabled={!sorting}
                          onClick={this.onSort}/>
-            <ListView rendererRef={this.onRenderer}/>
+            <ListView items={items}/>
         </View>
     }
 
