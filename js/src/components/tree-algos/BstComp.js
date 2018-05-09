@@ -1,5 +1,5 @@
 import React from 'react'
-import bst from 'src/algo/data-structures/bst'
+import Bst from 'src/algo/data-structures/bst'
 import {clearSelection, render, select, switchNodes} from 'src/components/tree/treeActions'
 import * as d3 from 'd3'
 import {prop, range} from 'ramda'
@@ -8,6 +8,7 @@ import './bst.global.sass'
 import Button from 'src/components/basic/Button'
 import HorizView from 'src/components/basic/HorizView'
 import ButtonPanel from 'src/components/basic/ButtonPanel'
+import View from 'src/components/basic/View'
 
 const treeActions = {
     select,
@@ -114,8 +115,8 @@ const addNodeButtons = (el, onClick) => {
 }
 
 
-const Bst = () => {
-    let tree = bst()
+const BstComp = () => {
+    let tree = Bst().add(5).add(3).add(7)
     let draw
 
     const renderRef = _draw => {
@@ -189,8 +190,31 @@ const Bst = () => {
                  }}>
             </div>
         </div>
-        <Tree renderRef={renderRef}/>
+        <Tree tree={tree}/>
     </div>
 }
 
-export default Bst
+class Bst2 extends React.Component {
+
+    state = {
+        tree: Bst().add(4).add(6).add(2)
+
+    }
+
+    addNode = () => {
+        this.setState({
+            tree: this.state.tree.add(ranNum())
+        })
+    }
+
+    render() {
+        const {tree} = this.state
+        return <View>
+            <Button onClick={this.addNode} label="Add node"/>
+            <Tree tree={tree}/>
+        </View>
+    }
+
+}
+
+export default Bst2

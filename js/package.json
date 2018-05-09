@@ -26,8 +26,10 @@
     "ramda": "^0.25.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
+    "react-move": "^2.7.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
+    "react-transition-group": "^2.3.1",
     "recompose": "^0.27.0",
     "semantic-ui-css": "^2.3.1",
     "semantic-ui-react": "^0.79.1"

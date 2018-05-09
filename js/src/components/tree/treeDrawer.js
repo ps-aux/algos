@@ -30,7 +30,7 @@ const switchAnimation = (nodesSel, onEnd) => {
 const nodeId = n => n.id
 
 
-const calcLayout = tree => {
+export const calcLayout = tree => {
     const root = d3.hierarchy(tree)
     const treeLayout = d3.tree()
         .nodeSize([20, 50])

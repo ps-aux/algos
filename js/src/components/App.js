@@ -5,7 +5,7 @@ import {range} from 'ramda'
 import Sorting from 'src/components/sorting/Sorting'
 import {Route, withRouter} from 'react-router'
 import View from 'src/components/basic/View'
-import Bst from 'src/components/tree-algos/Bst'
+import Bst from 'src/components/tree-algos/BstComp'
 import Graph from 'src/components/graph/Graph'
 import {Menu} from 'semantic-ui-react'
 import Page from 'src/components/Page'
@@ -23,7 +23,7 @@ const pages = [
         component: Sorting
     },
     {
-        path: '/bst',
+        path: '/Bst',
         title: 'Binary search tree',
         component: Bst
     },
