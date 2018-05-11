@@ -41,8 +41,12 @@ const withTransition = ({
         componentDidUpdate() {
             const {state, props} = this
             if (hasChanged(state, props)) {
-                d3.select(this.el)
-                    .transition(transition)
+                const sel = d3.select(this.el)
+
+                // Cancel ongoing transition to prevent error
+                sel.interrupt()
+
+                sel.transition(transition)
                     .attrs(attrs(props))
                     .on('end', () => this.setState({...this.props}))
             }
