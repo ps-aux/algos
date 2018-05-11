@@ -1,18 +1,7 @@
-import {anyPass, propEq} from 'ramda'
+import {getNeighbours, getNode} from 'src/algo/graph/graph'
 
-
-const getNode = ({nodes}, id) => nodes.find(propEq('id', id))
-
-const getNeighbours = (g, id) => g.links
-    .filter(anyPass([
-        propEq('source', id),
-        propEq('target', id)
-    ]))
-    .map(({source, target}) => source === id ?
-        getNode(g, target) : getNode(g, source))
 
 const bfs = (g, from, to) => {
-
 
     const visited = {}
     const markToVisit = {}
