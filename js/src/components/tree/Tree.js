@@ -71,19 +71,13 @@ const transition = d3.transition()
     .ease(d3.easeBounce)
 
 
-
-const hasLinkChanged = ({source: s1, target: t1},
-                        {source: s2, target: t2}) => hasChanged(s1, s2) || hasChanged(t1, t2)
-
-
-
-TNode = withTransition({
+const TNode = withTransition({
     transition,
     hasChanged,
     attrs: props => ({transform: translate(props)})
 })(Node)
 
-TLink = withTransition({
+const TLink = withTransition({
     transition,
     hasChanged: (a, b) => a.d !== b.d
 })(Link)
@@ -113,7 +107,4 @@ export default withProps(
     ({
          tree
      }
-    ) =>
-        ({layout: calcLayout(tree)})
-)
-(Tree)
+    ) => ({layout: calcLayout(tree)}))(Tree)
