@@ -1,4 +1,4 @@
-import {getNeighbours, getNode} from 'src/algo/graph/graph'
+import {getNeighbours, getNode, reconstructPath} from 'src/algo/graph/graph'
 
 
 const bfs = (g, from, to) => {
@@ -39,17 +39,7 @@ const bfs = (g, from, to) => {
     if (!found)
         return
 
-    // Reconstruct path
-    const path = [getNode(g, to)]
-    let srcNode = getNode(g, src[to])
-
-    while (srcNode) {
-        path.unshift(srcNode)
-        srcNode = getNode(g, src[srcNode.id])
-    }
-
-    return path
-
+    return reconstructPath(g, src, to)
 }
 
 

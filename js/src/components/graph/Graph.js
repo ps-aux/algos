@@ -1,18 +1,17 @@
 import React from 'react'
 import stl from './Graph.sass'
 import * as d3 from 'd3'
-import {path, prop, range} from 'ramda'
+import {prop, range} from 'ramda'
 import {NavMenuItem} from 'src/components/NavMenu'
 import {Menu} from 'semantic-ui-react'
 import Chance from 'chance'
-import graphRenderer from './renderer'
 import Button from 'src/components/basic/Button'
 import View from 'src/components/basic/View'
 import c from 'classnames'
 import bfs from 'src/algo/graph/bfs'
+import dfs from 'src/algo/graph/dfs'
 import Collection from 'src/components/basic/Collection'
 
-const linkStyle = stl.link
 const chance = new Chance()
 
 
