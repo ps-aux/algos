@@ -1,4 +1,4 @@
-import { mergeLists } from 'src/algo/other/mergeLists'
+import { mergeLists } from 'src/algo/other/merge-lists'
 
 it('merges 2 sorted lists', () => {
     const a = [1, 4, 8]
