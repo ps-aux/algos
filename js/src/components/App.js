@@ -1,15 +1,14 @@
 import React from 'react'
 
-import {heap} from 'src/algo/data-structures/heap'
+import {heap} from 'src/domain/data-structures/heap'
 import {range} from 'ramda'
-import Sorting from 'src/components/sorting/Sorting'
-import {Route, withRouter} from 'react-router'
 import View from 'src/components/basic/View'
-import Bst from 'src/components/tree-algos/BstComp'
-import Graph from 'src/components/graph/Graph'
+import Bst from 'src/domain/algorithms/tree/impl/BstComp'
 import {Menu} from 'semantic-ui-react'
 import Page from 'src/components/Page'
 import {NavMenuItem} from 'src/components/NavMenu'
+import Sorting from 'src/domain/algorithms/sorting/components/Sorting'
+import Graph from 'src/domain/algorithms/graph/components/Graph'
 
 
 const h = heap()
