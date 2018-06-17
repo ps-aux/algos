@@ -32,7 +32,8 @@ class GraphPage extends React.Component {
 
     state = {
         selecting: false,
-        selection: null
+        selection: null,
+        key: 0
     }
 
     static getDerivedStateFromProps (p, s) {
@@ -43,7 +44,8 @@ class GraphPage extends React.Component {
         const graph = createGraph(type)
         return {
             type,
-            graph
+            graph,
+            key: s.key + 1
         }
     }
 
@@ -127,7 +129,7 @@ class GraphPage extends React.Component {
     }
 
     render () {
-        const {graph, selecting, selection} = this.state
+        const {graph, selecting, selection, key} = this.state
         return <View>
             <Menu>
                 <NavMenuItem name="Grid" path="grid"/>
@@ -137,6 +139,7 @@ class GraphPage extends React.Component {
             <Button label="Path" onClick={this.startSelecting}/>
             <Graph data={graph}
                    onNodeClick={selecting ? this.onNodeSelect : null}
+                   k={key}
                    height={600}
                    width={960}/>
             {selecting && <View>

@@ -17,7 +17,7 @@ const layout = (graph, {height, width}) => {
 
     simulation.force('link').links(graph.links)
 
-    range(1, 100)
+    range(1, 200)
         .forEach(() => {
             simulation.tick()
         })
@@ -53,9 +53,25 @@ const Link = ({source: s, target: t, onClick, ...rest}) =>
 
 class Graph extends React.Component {
 
-    render () {
-        const {data, onNodeClick, height, width} = this.props
+    state = {}
+
+    static getDerivedStateFromProps (ps, s) {
+        const {data, height, width, k} = ps
+        if (k === s.key)
+            return s
+
+        console.log('calculatin layout')
         const {nodes, links} = layout(data, {height, width})
+        return {
+            nodes,
+            links,
+            key: k
+        }
+    }
+
+    render () {
+        const {onNodeClick, height, width} = this.props
+        const {nodes, links} = this.state
         return <svg width={width} height={height}>
             <Collection comp={Link}
                         items={links}/>
