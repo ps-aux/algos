@@ -1,4 +1,4 @@
-import {getNeighbours, getNode, reconstructPath} from 'src/domain/algorithms/graph/impl/graph'
+import {getNeighbours, getNode, reconstructPath} from 'src/domain/algorithms/graph/graph'
 
 
 const bfs = (g, from, to) => {

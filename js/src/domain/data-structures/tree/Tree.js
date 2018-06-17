@@ -1,5 +1,5 @@
 import React from 'react'
-import {calcLayout} from 'src/domain/data-structures/components/tree/treeDrawer'
+import {calcLayout} from 'src/domain/data-structures/tree/treeDrawer'
 import './Tree.global.sass'
 import {translate} from 'src/d3/utils'
 import * as d3 from 'd3'

@@ -1,4 +1,4 @@
-import {getNeighbours, reconstructPath} from 'src/domain/algorithms/graph/impl/graph'
+import {getNeighbours, reconstructPath} from 'src/domain/algorithms/graph/graph'
 
 
 const dfs = (g, from, to, visited = {}, srcMap = {}) => {

@@ -4,7 +4,7 @@ import { List } from 'src/domain/data-structures/list'
 import { sorts } from 'src/domain/algorithms/sorting/impl/index'
 import { play } from 'src/domain/algorithms/player'
 import { shuffle } from 'src/domain/algorithms/shuffle'
-import ListView from 'src/domain/data-structures/components/list/List'
+import ListView from 'src/domain/data-structures/list/components/List'
 import View from 'src/components/basic/View'
 import ButtonPanel from 'src/components/basic/ButtonPanel'
 

@@ -9,15 +9,6 @@ import App from 'src/components/App'
 
 const rootEl = window.document.getElementById('root')
 
-const w = new Worker('worker.js')
-
-w.onmessage = function (e) {
-    result.textContent = e.data
-    console.log('Message received from worker')
-}
-
-w.postMessage([5, 7])
-
 ReactDOM.render(
     <BrowserRouter>
         <App/>

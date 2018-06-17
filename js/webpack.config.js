@@ -59,7 +59,8 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'public/index.html'
+            template: 'public/index.html',
+            excludeChunks: ['worker']
         })
     ],
     // devtool: 'inline-source-map',

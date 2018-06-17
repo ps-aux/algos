@@ -8,6 +8,6 @@ const Collection = ({
     items.map(i => ({...i, ...props}))
         .map(i =>
             <Comp {...i} key={id(i)}
-                  onClick={() => i.onClick && i.onClick(i)}/>)
+                  onClick={i.onClick && (() => i.onClick(i))}/>)
 
 export default Collection

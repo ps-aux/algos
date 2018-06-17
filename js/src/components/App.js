@@ -8,7 +8,7 @@ import {Menu} from 'semantic-ui-react'
 import Page from 'src/components/Page'
 import {NavMenuItem} from 'src/components/NavMenu'
 import Sorting from 'src/domain/algorithms/sorting/components/Sorting'
-import Graph from 'src/domain/algorithms/graph/components/Graph'
+import GraphPage from 'src/domain/data-structures/graph/components/GraphPage'
 
 
 const h = heap()
@@ -30,7 +30,7 @@ const pages = [
         path: '/graph/:type?',
         link: '/graph/',
         title: 'Graph',
-        component: Graph
+        component: GraphPage
     }
 ]
 
