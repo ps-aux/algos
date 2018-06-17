@@ -2,8 +2,11 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 
-
 const config = {
+    entry: {
+        main: 'src/index.js',
+        worker: 'src/worker.js'
+    },
     resolve: {
         modules: ['node_modules', path.resolve(__dirname)]
     },

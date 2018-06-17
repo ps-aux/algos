@@ -1,11 +1,7 @@
-export const player = ({steps, playStep, tempo = 500, onDone}) => () => {
-    const play = () => {
-        const s = steps.shift()
-        if (!s)
-            return onDone()
+import { from, interval, zip } from 'rxjs'
 
-        playStep(s)
-        setTimeout(play, tempo)
-    }
-    play()
-}
+export const play = ({steps, tempo = 500}) =>
+    zip(
+        from(steps),
+        interval(tempo),
+        x => x)

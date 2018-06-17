@@ -1,16 +1,20 @@
 import React from 'react'
-import {multiply, range} from 'ramda'
-import {List} from 'src/domain/data-structures/list'
-import {sorts} from 'src/domain/algorithms/sorting/impl/index'
-import {player} from 'src/domain/algorithms/player'
-import {shuffle} from 'src/domain/algorithms/shuffle'
+import { multiply, range, max, reduce } from 'ramda'
+import { List } from 'src/domain/data-structures/list'
+import { sorts } from 'src/domain/algorithms/sorting/impl/index'
+import { play } from 'src/domain/algorithms/player'
+import { shuffle } from 'src/domain/algorithms/shuffle'
 import ListView from 'src/domain/data-structures/components/list/List'
 import View from 'src/components/basic/View'
 import ButtonPanel from 'src/components/basic/ButtonPanel'
 
+const maxVal = reduce(max, 9)
+
 const data = shuffle(List(
     range(0, 100).map(multiply(3))
 ))
+
+const height = maxVal(data)
 
 const sortActions = Object.entries(sorts)
     .map(([k, v]) => ({
@@ -26,16 +30,15 @@ class Sorting extends React.Component {
     }
 
     onSort = ({sort}) => {
-        const {steps} = sort(data.clone())
-        const play = player({
-            steps,
-            playStep: items => this.setState({items}),
-            tempo: 1,
-            onDone: () => this.setState({sorting: false})
+        this.setState({sorting: true})
+        play({
+            ...sort(data.clone()),
+            tempo: 1
+        }).subscribe({
+            next: items => this.setState({items}),
+            complete: () => this.setState({sorting: false})
         })
 
-        this.setState({sorting: true})
-        play()
     }
 
     render = () => {
@@ -44,7 +47,10 @@ class Sorting extends React.Component {
             <ButtonPanel actions={sortActions}
                          enabled={!sorting}
                          onClick={this.onSort}/>
-            <ListView items={items}/>
+            <ListView items={items}
+                      height={height}
+                      width={15 * data.length}
+                      itemWidth={10}/>
         </View>
     }
 
