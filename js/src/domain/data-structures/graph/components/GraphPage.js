@@ -8,6 +8,7 @@ import { radialGraph } from 'src/domain/data-structures/graph/data/radial'
 import { randomGraph } from 'src/domain/data-structures/graph/data/random'
 import { gridGraph } from 'src/domain/data-structures/graph/data/grid'
 import Graph from 'src/domain/data-structures/graph/components/Graph'
+import dfs from 'src/domain/algorithms/graph/dfs'
 
 const types = {
     grid: () => gridGraph(8, 8),
@@ -27,6 +28,8 @@ const createGraph = type => {
             ({...n, index}))
     }
 }
+
+const pathAlg = dfs
 
 class GraphPage extends React.Component {
 
@@ -79,7 +82,7 @@ class GraphPage extends React.Component {
             const from = sel.from.id
             const to = sel.to.id
             const {links, nodes} = this.state.graph
-            const p = bfs({
+            const p = pathAlg({
                 nodes,
                 links: links.map(l => ({
                     source: l.source.id,
@@ -93,7 +96,6 @@ class GraphPage extends React.Component {
             while (p.length > 1) {
                 let prev = p.pop()
 
-                console.log('to', n, 'from', prev)
                 const l = links.find(l =>
                     l.source === prev && l.target === n ||
                     l.target === prev && l.source === n

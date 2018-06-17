@@ -32,7 +32,7 @@ const Circle = styled.circle`
     cursor: ${ps => ps.onClick ? 'pointer' : 'default'}
 `
 
-const Node = ({x, y, r = 5, onClick, ...rest}) =>
+const Node = ({x, y, r = 12, onClick, ...rest}) =>
     <Circle {...rest}
             cx={x}
             cy={y}
@@ -60,7 +60,6 @@ class Graph extends React.Component {
         if (k === s.key)
             return s
 
-        console.log('calculatin layout')
         const {nodes, links} = layout(data, {height, width})
         return {
             nodes,
