@@ -5,7 +5,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,11 +40,17 @@ interface IsUniqueSpec {
 class SetImpl implements IsUniqueSpec {
 
     /**
-     * time:  O(n)
-     * space: O(n)
+     * time:  O(n) (ignoring computation of hash)
+     * space: O(min(n, m)) where m = charset size
+     *
+     *
+     * Alternatives:
+     *
+     * - using array where index is char value (codepoint)
+     * - using bitmap as more efficient version of array
      */
     public boolean isUnique(String s) {
-        Set<Character> set = new HashSet<>();
+        var set = new HashSet<Character>();
         for (Character c : s.toCharArray()) {
             if (!set.add(c))
                 return false;
@@ -65,8 +70,8 @@ class RecursiveImpl implements IsUniqueSpec {
     public boolean isUnique(String s) {
         if (s.length() == 1)
             return true;
-        char head = s.charAt(0);
-        String tail = s.substring(1);
+        var head = s.charAt(0);
+        var tail = s.substring(1);
 
         if (tail.contains(String.valueOf(head)))
             return false;
