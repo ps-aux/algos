@@ -5,6 +5,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -42,6 +45,26 @@ class First implements IsPermutationSpec {
     public boolean isPermutation(String a, String b) {
         if (a.length() != b.length())
             return false;
-        return false;
+
+        Map<Character, Integer> map = new HashMap<>();
+
+        for (var c : b.toCharArray()) {
+            var count = map.get(c);
+            if (count == null)
+                map.put(c, 1);
+            else
+                map.put(c, count + 1);
+
+        }
+
+        for (var c : a.toCharArray()) {
+            var count = map.get(c);
+            if (count == null || count == 0)
+                return false;
+            map.put(c, count - 1);
+        }
+
+
+        return true;
     }
 }
