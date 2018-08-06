@@ -1,10 +1,9 @@
 package aux.ps.excercices.ctci.chapter1;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +38,7 @@ interface IsPermutationSpec {
 }
 
 
-class First implements IsPermutationSpec {
+class MapSolution implements IsPermutationSpec {
 
     @Override
     public boolean isPermutation(String a, String b) {
@@ -66,5 +65,23 @@ class First implements IsPermutationSpec {
 
 
         return true;
+    }
+}
+
+class OrderingSolution implements IsPermutationSpec {
+
+
+    private String sort(String s) {
+        var chars = s.toCharArray();
+        Arrays.sort(chars);
+        return String.valueOf(chars);
+    }
+
+    @Override
+    public boolean isPermutation(String a, String b) {
+        if (a.length() != b.length())
+            return false;
+
+        return sort(a).equals(sort(b));
     }
 }
