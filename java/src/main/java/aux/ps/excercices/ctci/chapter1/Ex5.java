@@ -40,6 +40,7 @@ interface IsOneEditAwaySpec {
 }
 
 
+// TODO try to merge both methods into one loop
 class IsOneEditAwayImpl implements IsOneEditAwaySpec {
 
 
@@ -96,6 +97,10 @@ class IsOneEditAwayImpl implements IsOneEditAwaySpec {
         return isRemovedChar(b, a);
     }
 
+    /**
+     *  time: O(n)
+     *  space: O(1)
+     */
     @Override
     public boolean isOneEditAwayFrom(String a, String b) {
         return isRemovedChar(a, b) || isReplacedChar(a, b) || isInsertedChar(a, b);

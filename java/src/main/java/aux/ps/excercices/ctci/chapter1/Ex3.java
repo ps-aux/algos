@@ -29,6 +29,7 @@ interface UrlifySpec {
 }
 
 
+// TODO implement O(n) solution in book. This is O(n ^ 2)
 class FirstUrlify implements UrlifySpec {
 
     void moveBy(char[] s, int idx, int offset) {
@@ -49,7 +50,6 @@ class FirstUrlify implements UrlifySpec {
     void replace(char[] s, char what, char[] with) {
         for (int i = 0; i < s.length; i++) {
             if (s[i] == what) {
-                System.out.println(String.valueOf(s));
                 moveBy(s, i, with.length - 1);
                 insert(s, i, with);
                 // Move to the end of replaced part

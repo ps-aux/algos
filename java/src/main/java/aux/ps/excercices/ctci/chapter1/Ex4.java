@@ -37,6 +37,8 @@ interface IsPalindromePermutationSpec {
 }
 
 
+// TODO implement bitvector solution
+
 class FirstIsPalindromePermutation implements IsPalindromePermutationSpec {
 
     /**
@@ -55,6 +57,7 @@ class FirstIsPalindromePermutation implements IsPalindromePermutationSpec {
 
         var hasOdd = false;
 
+        // This can be counted during first iteration
         for (var c : counts) {
             if (c % 2 == 1) {
                 if (hasOdd)
