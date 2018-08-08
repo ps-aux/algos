@@ -1,80 +1,17 @@
 package aux.ps.excercices.ctci.chapter1;
 
+import aux.ps.excercices.ctci.data.Matrix;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
 import static org.assertj.core.api.Java6Assertions.assertThat;
-
-
-class Matrix {
-
-    private int[][] data;
-    private int size;
-
-    @Override
-    public String toString() {
-        return Arrays.stream(data)
-                .map(row ->
-                        Arrays.stream(row)
-                                .mapToObj(v -> String.format("%2d", v))
-                                .collect(joining(" ")))
-                .collect(joining("\n"));
-
-    }
-
-    private static Matrix ofSize(int n, boolean initWithZeroes) {
-        int[][] arr = new int[n][];
-
-        for (int i = 0; i < n; i++) {
-            arr[i] = IntStream.range(i * n + 1, (i + 1) * n + 1)
-                    .map(v -> initWithZeroes ? 0 : v).toArray();
-        }
-
-        var m = new Matrix();
-        m.data = arr;
-        m.size = n;
-
-        return m;
-    }
-
-    int y(int y) {
-        return size - y;
-    }
-
-    int x(int x) {
-        return x - 1;
-    }
-
-    void insert(int x, int y, int v) {
-        data[y(y)][x(x)] = v;
-    }
-
-    int get(int x, int y) {
-        return data[y(y)][x(x)];
-    }
-
-    static Matrix zeroed(int size) {
-        return ofSize(size, true);
-    }
-
-    static Matrix withSequenceInts(int size) {
-        return ofSize(size, false);
-    }
-
-
-}
 
 
 class MatrixArgsProvider implements ArgumentsProvider {

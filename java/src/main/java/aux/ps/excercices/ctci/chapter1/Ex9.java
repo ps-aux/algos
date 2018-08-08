@@ -5,55 +5,65 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-interface CompressStringSpec {
+interface RotateStringSpec {
 
-    String compressString(String s);
+    boolean isRotationOf(String a, String b);
 
-    @ParameterizedTest(name = "{0} is compressed to {1}")
+    @ParameterizedTest(name = "{0} is rotation to {1}")
     @CsvSource({
-            "aaabbbccc,a3b3c3",
-            "aaaabc,aaaabc",
-            "aaaaabc,a5b1c1",
-            "'',''"
+            "erbottlewat,waterbottle",
+            "abcde,deabc",
+            "a,a",
     })
-    default void test(String a, String b) {
-        assertThat(compressString(a)).isEqualTo(b);
+    default void is(String a, String b) {
+        assertThat(isRotationOf(a, b)).isTrue();
+    }
+
+    @ParameterizedTest(name = "{0} is not rotation to {1}")
+    @CsvSource({
+            "rbottlewat,waterbottle",
+    })
+    default void isNot(String a, String b) {
+        assertThat(isRotationOf(a, b)).isFalse();
     }
 
 
 }
 
 
-class CompressStringSpecImpl implements CompressStringSpec {
-
+class RotateStringImpl implements RotateStringSpec {
 
     @Override
-    public String compressString(String s) {
-        if (s.isEmpty())
-            return s;
+    public boolean isRotationOf(String a, String b) {
+        if (a.length() != b.length())
+            return false;
 
-        StringBuilder out = new StringBuilder();
-        char current = s.charAt(0);
-        int count = 0;
+        var l = a.length();
 
+        var offset = 0;
+        while (offset < l) {
+            if (a.charAt(offset) == b.charAt(0)) {
+                var i = 0;
+                var j = offset;
+                while (true) {
+                    // We found difference. Continue with outer.
+                    if (b.charAt(i) != a.charAt(j))
+                        break;
 
-        for (char c : s.toCharArray()) {
-            if (c != current) {
-                out.append(current).append(count);
-                current = c;
-                count = 1;
+                    // We checked the whole string
+                    if (i == l - 1)
+                        return true;
+
+                    i++;
+                    // Rotate
+                    j = j == l - 1 ? 0 : j + 1;
+                }
             } else {
-                count++;
+                offset++;
             }
         }
-        // Output last
-        out.append(current).append(count);
 
-        var res = out.toString();
-
-        if (res.length() >= s.length())
-            return s;
-
-        return res;
+        return false;
     }
 }
+
