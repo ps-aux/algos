@@ -29,6 +29,7 @@ dependencies {
     compile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     compile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
     compile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    compile group: 'org.javatuples', name: 'javatuples', version: '1.2'
 //    compile("org.junit.jupiter:junit-platform-suite-api:${junitJupiterVersion}")
     compile("org.assertj:assertj-core:3.10.0")
     compile group: 'org.openjdk.jmh', name: 'jmh-core', version: '1.21'
