@@ -63,3 +63,30 @@ class KthToLastImpl implements KthToLastSpec {
     }
 }
 
+class KthToLastNoSizeImpl implements KthToLastSpec {
+
+
+    private static class NodeHolder {
+        Node n;
+    }
+
+    private int kthToLastInternal(Node n, int k, NodeHolder holder) {
+        int idx = n.next == null ? 0 : kthToLastInternal(n.next, k, holder) + 1;
+
+        if (idx == k) {
+            holder.n = n;
+        }
+        return idx;
+    }
+
+
+    @Override
+    public int kthToLast(Node n, int k) {
+
+        NodeHolder holder = new NodeHolder();
+        kthToLastInternal(n, k, holder);
+
+        return holder.n.data;
+    }
+}
+
