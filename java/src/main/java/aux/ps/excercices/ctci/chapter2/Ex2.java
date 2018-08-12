@@ -63,6 +63,7 @@ class KthToLastImpl implements KthToLastSpec {
     }
 }
 
+// TODO implement also using iteration
 class KthToLastNoSizeImpl implements KthToLastSpec {
 
 
