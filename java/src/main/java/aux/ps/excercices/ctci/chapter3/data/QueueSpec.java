@@ -1,5 +1,6 @@
-package aux.ps.datastructures.queue;
+package aux.ps.excercices.ctci.chapter3.data;
 
+import aux.ps.datastructures.queue.Queue;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;

@@ -71,19 +71,6 @@ class ThreeInOneSpec {
 
         assertThat(stacks[0].pop()).isEqualTo(0);
         assertThat(stacks[0].isEmpty()).isTrue();
-
-/*        Supplier<Stream<StackTester>> t = () -> testers(size, count);
-
-        t.get()
-                .forEach(StackSpec::changePushAndPop);
-        t.get()
-                .forEach(StackSpec::do2pushAnd2Pop);
-        t.get()
-                .forEach(StackSpec::isEmpty);
-        t.get()
-                .forEach(StackSpec::peek);*/
-
-
     }
 
 }
