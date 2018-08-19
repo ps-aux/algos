@@ -19,9 +19,9 @@ public class Graph {
         this.nodes = nodes;
     }
 
-    private static class Node {
-        int id;
-        List<Node> nodes;
+    public static class Node {
+        public final int id;
+        public final List<Node> nodes;
 
         public Node(int id) {
             this.id = id;
@@ -31,6 +31,11 @@ public class Graph {
         private void addNode(Node n) {
             nodes.add(n);
         }
+
+        public boolean isNeighbourOf(int id) {
+            return nodes.stream().anyMatch(n -> n.id == id);
+        }
+
 
         @Override
         public String toString() {
@@ -44,6 +49,12 @@ public class Graph {
         }
     }
 
+
+    public Node node(int id) {
+        return this.nodes.stream()
+                .filter(n -> n.id == id)
+                .findFirst().get();
+    }
 
     @Override
     public String toString() {
