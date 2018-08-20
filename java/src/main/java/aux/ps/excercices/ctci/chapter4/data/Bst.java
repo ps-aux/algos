@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -58,11 +59,30 @@ public class Bst {
         public final int val;
         public Node left;
         public Node right;
+        public Node parent;
 
-        public Node(int val) {
+        public Node(int val, Node parent) {
             this.val = val;
+            this.parent = parent;
         }
 
+        public Node(int val) {
+            this(val, null);
+        }
+
+
+        public Node findNode(int val) {
+            if (val == this.val)
+                return this;
+
+            if (val < this.val) {
+                return left == null ? null : left.findNode(val);
+            } else {
+                assert val > this.val;
+                return right == null ? null : right.findNode(val);
+            }
+
+        }
 
         public int height() {
             var r = 1 + Math.max(childHeight(left), childHeight(right));
@@ -81,14 +101,14 @@ public class Bst {
 
             if (i > val) {
                 if (right == null) {
-                    right = new Node(i);
+                    right = new Node(i, this);
                 } else {
                     right.add(i);
                 }
             } else {
                 assert i < val;
                 if (left == null) {
-                    left = new Node(i);
+                    left = new Node(i, this);
                 } else {
                     left.add(i);
                 }
@@ -146,8 +166,6 @@ public class Bst {
         }
 
 
-
-
         public Collector collectVals() {
             var h = height();
             var col = Collector.ofSize(h);
@@ -193,7 +211,54 @@ public class Bst {
         n.add(21);
         System.out.println(n);
     }
+}
 
+
+abstract class Visitor {
+
+    LinkedList<Integer> visit(Node n) {
+        LinkedList<Integer> l = new LinkedList<>();
+        doVisit(n, l);
+        return l;
+    }
+
+    abstract void doVisit(Node n, List<Integer> list);
+}
+
+class InOrderVisitor extends Visitor {
+
+    @Override
+    void doVisit(Node n, List<Integer> list) {
+        if (n == null)
+            return;
+        doVisit(n.left, list);
+        list.add(n.val);
+        doVisit(n.right, list);
+    }
+}
+
+class PreOrderVisitor extends Visitor {
+
+    @Override
+    void doVisit(Node n, List<Integer> list) {
+        if (n == null)
+            return;
+        list.add(n.val);
+        doVisit(n.left, list);
+        doVisit(n.right, list);
+    }
+}
+
+class PostOrderVisitor extends Visitor {
+
+    @Override
+    void doVisit(Node n, List<Integer> list) {
+        if (n == null)
+            return;
+        doVisit(n.left, list);
+        doVisit(n.right, list);
+        list.add(n.val);
+    }
 }
 
 class BstTest {
@@ -217,7 +282,38 @@ class BstTest {
 
         sut.add(12);
         assertThat(sut.height()).isEqualTo(4);
+    }
 
+
+    Node tree() {
+        Node n = new Node(10);
+        n.add(5);
+        n.add(1);
+        n.add(7);
+
+        n.add(15);
+
+        return n;
+    }
+
+    @Test
+    public void visitInOrder() {
+        assertThat(new InOrderVisitor().visit(tree()))
+                .isEqualTo(List.of(1, 5, 7, 10, 15));
+
+    }
+
+    @Test
+    public void visitPreOrder() {
+        assertThat(new PreOrderVisitor().visit(tree()))
+                .isEqualTo(List.of(10, 5, 1, 7, 15));
+
+    }
+
+    @Test
+    public void visitPostOrder() {
+        assertThat(new PostOrderVisitor().visit(tree()))
+                .isEqualTo(List.of(1, 7, 5, 15, 10));
 
     }
 

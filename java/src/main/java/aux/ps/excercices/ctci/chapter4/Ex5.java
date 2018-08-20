@@ -80,6 +80,13 @@ class ValidateBstImpl implements ValidateBstSpec {
 
     @Override
     public boolean isValidBst(Node bst) {
-        return false;
+        if (bst == null)
+            return true;
+        if (bst.left != null && bst.left.val >= bst.val)
+            return false;
+        if (bst.right != null && bst.right.val <= bst.val)
+            return false;
+
+        return isValidBst(bst.right) && isValidBst(bst.left);
     }
 }
