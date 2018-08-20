@@ -141,8 +141,11 @@ public class Bst {
 
         @Override
         public String toString() {
-            return makeString();
+            return val + "";
+//            return makeString();
         }
+
+
 
 
         public Collector collectVals() {
