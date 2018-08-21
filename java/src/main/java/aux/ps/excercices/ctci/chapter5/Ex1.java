@@ -1,4 +1,4 @@
-package aux.ps.excercices.ctci;
+package aux.ps.excercices.ctci.chapter5;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;

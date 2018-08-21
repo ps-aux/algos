@@ -17,7 +17,7 @@ interface ValidateBstSpec {
 
     boolean isValidBst(Node bst);
 
-    @ParameterizedTest(name = "{0} has minimal length")
+    @ParameterizedTest(name = "{0} is valid bst")
     @ArgumentsSource(Data.class)
     default void test(Node bst, boolean expected) {
         assertThat(isValidBst(bst)).isEqualTo(expected);
@@ -88,5 +88,25 @@ class ValidateBstImpl implements ValidateBstSpec {
             return false;
 
         return isValidBst(bst.right) && isValidBst(bst.left);
+    }
+}
+
+class MinMaxImpl implements ValidateBstSpec {
+
+    @Override
+    public boolean isValidBst(Node bst) {
+        return isValid(bst, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    private boolean isValid(Node n, int min, int max) {
+        if (n == null)
+            return true;
+
+        if (!(min < n.val && n.val < max))
+            return false;
+
+        return isValid(n.left, min, n.val) &&
+                isValid(n.right, n.val, max);
+
     }
 }

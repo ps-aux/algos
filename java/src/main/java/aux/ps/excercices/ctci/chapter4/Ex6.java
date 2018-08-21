@@ -61,6 +61,8 @@ class SuccessorImpl implements SuccessorSpec {
     @Override
     public Node findNext(Node n) {
         var r = n.right;
+
+        // Find leftmost node in the right subtree.
         if (r != null) {
             Node n2 = r;
             while (n2.left != null) {
@@ -69,18 +71,22 @@ class SuccessorImpl implements SuccessorSpec {
             return n2;
         }
 
+        // No right node. No Parent. This is the root node.
         if (n.parent == null)
             return null;
 
+        // Is left node. Parent node is next.
         if (isLeft(n))
             return n.parent;
 
+        // It is right node. Find the first parent which is left node.
         Node n2 = n;
         while (!isLeft(n2) || n.parent != null) {
             n2 = n2.parent;
         }
 
         if (n.parent == null)
+            // It was the last node - rightmost node.
             return null;
 
         return n.parent;
