@@ -9,8 +9,10 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -21,11 +23,14 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 interface BstSequencesSpec {
 
 
-    int[][] bstSequences(Node bst);
+    List<List<Integer>> bstSequences(Node bst);
 
     @ParameterizedTest(name = "all bst sequences")
     @ArgumentsSource(Data.class)
     default void test(Node a, int[][] expected) {
+        List<List<Integer>> ex = Arrays.stream(expected)
+                .map(Arrays::asList)
+                .collect(toList());
         bstSequences(a);
     }
 
@@ -78,26 +83,43 @@ class BstSequencesImpl implements BstSequencesSpec {
         return inverted;
     }
 
-    List<List<Integer>> combine(List<List<Integer>> list, Integer val) {
 
+    List<Integer> concat(List<Integer> a, List<Integer> b) {
+        var x = new ArrayList<Integer>();
+        x.addAll(a);
+        x.addAll(b);
+        return x;
     }
 
-    List<List<Integer>> perms(List<List<Integer>> list) {
+    List<List<Integer>> perms(List<Integer> list) {
+        if (list.size() == 1)
+            return List.of(list);
+
         List<List<Integer>> res = new ArrayList<>();
 
-        res.add(list.get(0));
-        for (int i = 1; i < list.size(); i++) {
-            var l = list.get(i);
+        for (int i = 0; i < list.size(); i++) {
+            var el = list.get(i);
+            var others = list.stream().filter(e -> !e.equals(el))
+                    .collect(toList());
+            var perms = perms(others).stream().map(l -> concat(List.of(el), l))
+                    .collect(toList());
 
+            res.addAll(perms);
         }
 
         return res;
     }
 
+    List<List<Integer>> perms(List<List<Integer>> a, List<List<Integer>> b) {
+        return a.stream().map(l1 ->
+                b.stream().map(l2 -> concat(l1, l2)))
+                .flatMap(x -> x)
+                .collect(toList());
+    }
 
 
     @Override
-    public int[][] bstSequences(Node bst) {
+    public List<List<Integer>> bstSequences(Node bst) {
 /*        List<List<Integer>> sequences = new ArrayList<>();
         List<Integer> toRoot = new ArrayList<>();
         toRoot.add(1);
@@ -113,6 +135,7 @@ class BstSequencesImpl implements BstSequencesSpec {
 
         var inv = invert(vals);
         System.out.println(inv);
-        return new int[0][];
+        System.out.println(perms(perms(List.of(4, 5)), perms(List.of(1, 2, 3))));
+        return new ArrayList<>();
     }
 }
