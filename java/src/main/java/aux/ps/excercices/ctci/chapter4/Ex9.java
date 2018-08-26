@@ -8,10 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -27,7 +24,7 @@ interface BstSequencesSpec {
 
     @ParameterizedTest(name = "all bst sequences")
     @ArgumentsSource(Data.class)
-    default void test(Node a, int[][] expected) {
+    default void test(Node a, Integer[][] expected) {
         List<List<Integer>> ex = Arrays.stream(expected)
                 .map(Arrays::asList)
                 .collect(toList());
@@ -47,7 +44,7 @@ interface BstSequencesSpec {
             t1.add(14);
             t1.add(22);
 
-            int[][] t1Res = {
+            Integer[][] t1Res = {
                     {8, 4, 5, 20, 14, 22},
                     {8, 4, 5, 20, 22, 14},
                     {8, 20, 22, 14, 4, 5}
@@ -61,6 +58,9 @@ interface BstSequencesSpec {
     }
 }
 
+/**
+ * TODO finish`
+ */
 class BstSequencesImpl implements BstSequencesSpec {
 
     private void collectLevels(Node n, int h, List<List<Integer>> levels) {
@@ -84,8 +84,8 @@ class BstSequencesImpl implements BstSequencesSpec {
     }
 
 
-    List<Integer> concat(List<Integer> a, List<Integer> b) {
-        var x = new ArrayList<Integer>();
+    LinkedList<Integer> concat(List<Integer> a, List<Integer> b) {
+        var x = new LinkedList<Integer>();
         x.addAll(a);
         x.addAll(b);
         return x;
@@ -118,24 +118,74 @@ class BstSequencesImpl implements BstSequencesSpec {
     }
 
 
-    @Override
-    public List<List<Integer>> bstSequences(Node bst) {
-/*        List<List<Integer>> sequences = new ArrayList<>();
-        List<Integer> toRoot = new ArrayList<>();
-        toRoot.add(1);
+    LinkedList<Integer> tail(List<Integer> l) {
+        LinkedList<Integer> n = new LinkedList<>(l);
+        n.removeFirst();
+        return n;
+    }
 
-        sequences.add(toRoot);*/
+    List<LinkedList<Integer>> weave(List<Integer> a, List<Integer> b) {
+        if (a.isEmpty())
+            return List.of(new LinkedList<>(a));
+        if (b.isEmpty())
+            return List.of(new LinkedList<>(b));
 
-        int lvl = bst.height() - 1;
-        List<List<Integer>> vals = IntStream.range(0, lvl + 1)
-                .mapToObj(i -> new LinkedList<Integer>())
+
+        List<LinkedList<Integer>> as = IntStream.range(1, a.size())
+                .mapToObj(i -> {
+                    List<Integer> head = a.subList(0, i);
+                    return weave(a.subList(i, a.size()), b)
+                            .stream()
+                            .map(l -> concat(head, l));
+                })
+                .flatMap(x -> x)
                 .collect(toList());
 
-        collectLevels(bst, lvl, vals);
+        List<LinkedList<Integer>> bs = IntStream.range(1, b.size())
+                .mapToObj(i -> {
+                    List<Integer> head = b.subList(0, i);
+                    return weave(b.subList(i, b.size()), a)
+                            .stream()
+                            .map(l -> concat(head, l));
+                })
+                .flatMap(x -> x)
+                .collect(toList());
 
-        var inv = invert(vals);
-        System.out.println(inv);
-        System.out.println(perms(perms(List.of(4, 5)), perms(List.of(1, 2, 3))));
-        return new ArrayList<>();
+
+        as.addAll(bs);
+        return as;
+    }
+
+    List<LinkedList<Integer>> weaveAll(List<List<Integer>> a, List<List<Integer>> b) {
+        return a.stream()
+                .flatMap(l1 ->
+                        b.stream().flatMap(l2 -> weave(l1, l2).stream()))
+                .collect(toList());
+    }
+
+    private LinkedList<Integer> prepend(Integer h, LinkedList<Integer> tail) {
+        var n = new LinkedList<>(tail);
+        n.addFirst(h);
+        return n;
+    }
+
+    @Override
+    public List<List<Integer>> bstSequences(Node bst) {
+        if (bst == null)
+            return Collections.emptyList();
+
+        if (bst.left == null && bst.right == null)
+            return List.of(List.of(bst.val));
+
+        var w = weaveAll(bstSequences(bst.left), bstSequences(bst.right));
+
+        List<List<Integer>> r = w.stream().map(l -> prepend(bst.val, l))
+                .collect(toList());
+
+        System.out.println("--");
+        System.out.println(weave(List.of(1), List.of(4, 5)));
+        System.out.println("--");
+//        System.out.println(r);
+        return r;
     }
 }
