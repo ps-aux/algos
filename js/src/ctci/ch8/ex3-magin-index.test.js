@@ -1,7 +1,5 @@
 const assertMagic = (arr, i) => expect(arr[i]).toBe(i)
 
-const input = [-1, 0, 2, 4, 7, 9, 15, 10, 27, 30]
-
 const findMagic = (arr, start = 0, end = arr.length) => {
   if (start === end - 1) {
     return arr[start] === start ? start : -1
