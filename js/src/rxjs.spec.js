@@ -1,6 +1,6 @@
 import { rxPlayer } from 'src/domain/algorithms/player'
 
-it('wowow', done => {
+it.skip('wowow', done => {
     return
     const arr = [7, 5, 4]
 
