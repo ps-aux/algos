@@ -41,16 +41,28 @@ const fromEnd = (A, B) => {
       A[i] = b
       bi--
     }
-    console.log(A)
     i--
   }
 
 }
 
-it('fromEnd', () => {
-  const A = [1, 6, 10, null, null, null]
-  fromEnd(A, [2, 3, 8])
-  expect(A).toMatchObject([1, 2, 3, 6, 8, 10])
-})
+describe('fromEnd', () => {
+  it('case 1', () => {
+    const A = [1, 6, 10, null, null, null]
+    fromEnd(A, [2, 3, 8])
+    expect(A).toMatchObject([1, 2, 3, 6, 8, 10])
+  })
 
+  it('case 2', () => {
+    const A = [1, 6, , null, null]
+    fromEnd(A, [2, 3, 4])
+    expect(A).toMatchObject([1, 2, 3, 4, 6])
+  })
+
+  it('edge case 2', () => {
+    const A = [10, null, null, null]
+    fromEnd(A, [2, 3, 8])
+    expect(A).toMatchObject([2, 3, 8, 10])
+  })
+})
 
