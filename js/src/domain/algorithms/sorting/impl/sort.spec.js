@@ -1,11 +1,8 @@
-import {random} from 'faker'
-import {mergeSort, sorts} from 'src/domain/algorithms/sorting/impl/index'
-import {range, subtract} from "ramda"
-import {List} from 'src/domain/data-structures/list'
-
-
-const randomArray = (size = 10) =>
-    range(0, size).map(random.number)
+import { random } from 'faker'
+import { mergeSort, sorts } from 'src/domain/algorithms/sorting/impl/index'
+import { subtract } from 'ramda'
+import { List } from 'src/domain/data-structures/list'
+import { randomArray } from 'src/domain/algorithms/sorting/impl/dataGen'
 
 const testSort = (sort, arr) => {
 
@@ -14,8 +11,7 @@ const testSort = (sort, arr) => {
 
     const lst = List(arr)
 
-    expect(sort(lst).toArray())
-        .toEqual(expected)
+    expect(sort(lst).toArray()).toEqual(expected)
 
 }
 
@@ -30,6 +26,5 @@ const sortTests = (name, impl) => {
 }
 
 describe('sort', () =>
-    Object.entries(sorts)
-        .forEach(([name, impl]) =>
-            sortTests(name, impl)))
+    Object.entries(sorts).forEach(([name, impl]) =>
+        sortTests(name, impl)))
