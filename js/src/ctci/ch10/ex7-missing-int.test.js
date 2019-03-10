@@ -1,4 +1,3 @@
-import { always, range } from 'ramda'
 
 const search = (arr, val, start = 0, end = arr.length) => {
     // singleton
@@ -19,8 +18,6 @@ const search = (arr, val, start = 0, end = arr.length) => {
         v = arr[mid]
     }
 
-    // console.log('mid', mid)
-    // console.log('val', v)
     if (v === val)
         return mid
     if (mid === start)
