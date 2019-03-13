@@ -1,23 +1,19 @@
-function ListNode (val) {
+function ListNode(val) {
     this.val = val
     this.next = null
 }
 
-ListNode.prototype.toString = function () {
+ListNode.prototype.toString = function() {
     return '(' + this.val + ',' + (this.next ? this.next : 'null') + ')'
 }
 
-ListNode.prototype.equals = function (other) {
-    if (other === null)
-        return false
+ListNode.prototype.equals = function(other) {
+    if (other === null) return false
 
-    if (this.val !== other.val)
-        return false
+    if (this.val !== other.val) return false
 
-    if (this.next == null)
-        return other.next == null
-    else
-        return this.next.equals(other.next)
+    if (this.next == null) return other.next == null
+    else return this.next.equals(other.next)
 }
 
 const list = (...vals) => {
@@ -33,7 +29,7 @@ const list = (...vals) => {
     return head
 }
 
-const addTwoNumbers = function (l1, l2) {
+const addTwoNumbers = function(l1, l2) {
     let carry = 0
     let head
     let current
@@ -67,6 +63,8 @@ const addTwoNumbers = function (l1, l2) {
 
 describe('Two sum', () => {
     it('simple', () => {
-        expect(addTwoNumbers(list(2, 4, 3), list(5, 6, 4)).equals(list(7, 0, 8))).toBeTruthy()
+        expect(
+            addTwoNumbers(list(2, 4, 3), list(5, 6, 4)).equals(list(7, 0, 8))
+        ).toBeTruthy()
     })
 })

@@ -21,7 +21,6 @@ export const countDigits = n => {
 }
 
 export const sortByDigitPosition = (input, pos) => {
-
     const byDigit = []
 
     // Yer old count sort
@@ -34,8 +33,7 @@ export const sortByDigitPosition = (input, pos) => {
     const out = []
 
     byDigit.forEach(b => {
-        if (!b)
-            return
+        if (!b) return
         b.forEach(n => out.push(n))
     })
 
@@ -48,7 +46,6 @@ export const getDigitAtPosition = (n, pos) => {
     const divided = Math.floor(n / divider)
 
     return divided % radix
-
 }
 
 export const radixSort = input => {
@@ -61,4 +58,3 @@ export const radixSort = input => {
 
     return arr
 }
-

@@ -1,8 +1,10 @@
-import {getNeighbours, getNode, reconstructPath} from 'src/domain/algorithms/graph/graph'
-
+import {
+    getNeighbours,
+    getNode,
+    reconstructPath
+} from 'src/domain/algorithms/graph/graph'
 
 const bfs = (g, from, to) => {
-
     const visited = {}
     const markToVisit = {}
 
@@ -11,7 +13,7 @@ const bfs = (g, from, to) => {
     const root = getNode(g, from)
     visited[root.id] = true
 
-    const toVisit =  [root]
+    const toVisit = [root]
 
     let found = false
     while (toVisit.length) {
@@ -26,21 +28,18 @@ const bfs = (g, from, to) => {
         visited[id] = true
 
         getNeighbours(g, id)
-            .filter(({id}) => !visited[id])
+            .filter(({ id }) => !visited[id])
             .filter(n => !toVisit.includes(n))
             .forEach(n => {
                 src[n.id] = id
                 markToVisit[n.id] = true
                 toVisit.unshift(n)
             })
-
     }
 
-    if (!found)
-        return
+    if (!found) return
 
     return reconstructPath(g, src, to)
 }
-
 
 export default bfs

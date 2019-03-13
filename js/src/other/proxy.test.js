@@ -6,6 +6,5 @@ describe('proxy', () => {
 
     it('intercept get', () => {
         expect(p[1]).toBe(`val is ${a[1]}`)
-
     })
 })

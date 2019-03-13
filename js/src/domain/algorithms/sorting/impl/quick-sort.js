@@ -5,8 +5,7 @@ import assert from 'assert'
  */
 export const quickSort = (list, l = 0, h = list.length) => {
     // _Array of 1 element or empty List is sorted
-    if (h - l <= 1)
-        return
+    if (h - l <= 1) return
 
     const pivot = partition(list, l, h)
     // Before pivot
@@ -22,8 +21,7 @@ export const partition = (list, l, h) => {
     assert(l != null)
     assert(h != null)
     // _Array of 1 element or empty List is partitioned
-    if (h - l <= 1)
-        return
+    if (h - l <= 1) return
 
     const pivot = l
     const pivotVal = list[pivot]
@@ -32,13 +30,15 @@ export const partition = (list, l, h) => {
 
     // While pointers are not crossed
     while (li <= hi) {
-        while (list[li] <= pivotVal && li < h) // Prevent going outside of the bounds
+        while (
+            list[li] <= pivotVal &&
+            li < h // Prevent going outside of the bounds
+        )
             li++
-        while (list[hi] > pivotVal && hi > l)
-            hi--
+        while (list[hi] > pivotVal && hi > l) hi--
         assert(li !== hi)
-        if (li < hi &&
-            li < h) // Do not swap if li is out of bounds (for every x in List  <= pivot )
+        if (li < hi && li < h)
+            // Do not swap if li is out of bounds (for every x in List  <= pivot )
             list.swap(li, hi)
     }
 

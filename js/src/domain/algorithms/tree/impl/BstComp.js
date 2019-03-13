@@ -1,8 +1,13 @@
 import React from 'react'
 import Bst from 'src/domain/data-structures/bst'
-import {clearSelection, render, select, switchNodes} from 'src/domain/data-structures/tree/treeActions'
+import {
+    clearSelection,
+    render,
+    select,
+    switchNodes
+} from 'src/domain/data-structures/tree/treeActions'
 import * as d3 from 'd3'
-import {prop, range} from 'ramda'
+import { prop, range } from 'ramda'
 import Tree from 'src/domain/data-structures/tree/Tree'
 import './bst.global.sass'
 import Button from 'src/components/basic/Button'
@@ -15,15 +20,11 @@ const treeActions = {
     switch: switchNodes
 }
 
-const btn = (name, action) =>
-    <Button onClick={action} label={name}/>
+const btn = (name, action) => <Button onClick={action} label={name} />
 
+const ranNum = (max = 100) => Math.floor(Math.random() * max)
 
-const ranNum = (max = 100) =>
-    Math.floor(Math.random() * max)
-
-const treeNodes = tree =>
-    tree.reduce((a, n) => (a.push(n), a), [])
+const treeNodes = tree => tree.reduce((a, n) => (a.push(n), a), [])
 
 const ranNode = tree => treeNodes(tree)[ranNum(tree.size())]
 
@@ -40,7 +41,8 @@ const sndTree = {
                     value: 123,
                     path: [0, 0, 0],
                     children: [{}, {}]
-                }]
+                }
+            ]
         },
         {
             value: 1,
@@ -50,11 +52,8 @@ const sndTree = {
     ]
 }
 
-
 const addNodeButtons = (el, onClick) => {
-
-    const _data = range(1, 50)
-        .map(v => ({value: v}))
+    const _data = range(1, 50).map(v => ({ value: v }))
 
     const remove = d => {
         d.removed = true
@@ -65,11 +64,13 @@ const addNodeButtons = (el, onClick) => {
     const update = data => {
         const r = 10
         const size = r * 2 + 5
-        const nodes = d3.select(el)
+        const nodes = d3
+            .select(el)
             .selectAll('.node')
             .data(data)
 
-        const entered = nodes.enter()
+        const entered = nodes
+            .enter()
             .append('svg')
             .attrs({
                 height: size,
@@ -86,15 +87,14 @@ const addNodeButtons = (el, onClick) => {
                 remove(d)
             })
 
-        entered.append('circle')
-            .attrs((_, i) => ({
-                r,
-                cx: '50%',
-                cy: '50%'
-            }))
+        entered.append('circle').attrs((_, i) => ({
+            r,
+            cx: '50%',
+            cy: '50%'
+        }))
 
-
-        entered.append('text')
+        entered
+            .append('text')
             .style('text-anchor', 'middle')
             .attrs({
                 x: '50%',
@@ -104,7 +104,8 @@ const addNodeButtons = (el, onClick) => {
 
         nodes.exit().remove()
 
-        nodes.filter(prop('removed'))
+        nodes
+            .filter(prop('removed'))
             .each(a => {
                 console.log('removed', a)
             })
@@ -114,9 +115,11 @@ const addNodeButtons = (el, onClick) => {
     update(_data)
 }
 
-
 const BstComp = () => {
-    let tree = Bst().add(5).add(3).add(7)
+    let tree = Bst()
+        .add(5)
+        .add(3)
+        .add(7)
     let draw
 
     const renderRef = _draw => {
@@ -124,20 +127,18 @@ const BstComp = () => {
         draw(render(tree))
     }
 
-
     const addNode = val => {
         const steps = []
-        tree = tree.add(val, {steps, action: treeActions})
+        tree = tree.add(val, { steps, action: treeActions })
         console.log('steps', steps)
-        const s = [...steps, clearSelection(null, {duration: 0})]
+        const s = [...steps, clearSelection(null, { duration: 0 })]
         // draw(stl)
         draw(render(tree))
     }
 
     const nodesBtns = el => {
-        if (!el)
-            return
-        addNodeButtons(el, ({value}) => addNode(value))
+        if (!el) return
+        addNodeButtons(el, ({ value }) => addNode(value))
     }
 
     const actions = [
@@ -149,16 +150,16 @@ const BstComp = () => {
             label: 'Select',
             run: () =>
                 draw([
-                    select([0], {duration: 2000}),
-                    select([0, 0], {duration: 2000}),
-                    select([0, 1], {duration: 2000})
+                    select([0], { duration: 2000 }),
+                    select([0, 0], { duration: 2000 }),
+                    select([0, 1], { duration: 2000 })
                 ])
         },
         {
             label: 'Switch 1 <-> 2',
             run: () =>
                 draw([
-                    switchNodes({src: [0, 0], dst: [0, 1]}),
+                    switchNodes({ src: [0, 0], dst: [0, 1] }),
                     render(sndTree)
                 ])
         },
@@ -173,32 +174,34 @@ const BstComp = () => {
                         // dNodes[3].selected = true
                         // switchNodes(nodes[0], nodes[3])(dNodes)
                     })
-
                 })
             }
         }
-
     ]
 
-    return <div className="bst">
-        <div className="control-panel">
-            <ButtonPanel actions={actions}
-                         onClick={a => a.run()}/>
-            <div className="new-nodes tree" ref={nodesBtns} // Hack with .tree to style as in tree
-                 style={{
-                     flexDirection: 'row'
-                 }}>
+    return (
+        <div className="bst">
+            <div className="control-panel">
+                <ButtonPanel actions={actions} onClick={a => a.run()} />
+                <div
+                    className="new-nodes tree"
+                    ref={nodesBtns} // Hack with .tree to style as in tree
+                    style={{
+                        flexDirection: 'row'
+                    }}
+                />
             </div>
+            <Tree tree={tree} />
         </div>
-        <Tree tree={tree}/>
-    </div>
+    )
 }
 
 class Bst2 extends React.Component {
-
     state = {
-        tree: Bst().add(4).add(6).add(2)
-
+        tree: Bst()
+            .add(4)
+            .add(6)
+            .add(2)
     }
 
     addNode = () => {
@@ -208,13 +211,14 @@ class Bst2 extends React.Component {
     }
 
     render() {
-        const {tree} = this.state
-        return <View>
-            <Button onClick={this.addNode} label="Add node"/>
-            <Tree tree={tree}/>
-        </View>
+        const { tree } = this.state
+        return (
+            <View>
+                <Button onClick={this.addNode} label="Add node" />
+                <Tree tree={tree} />
+            </View>
+        )
     }
-
 }
 
 export default Bst2

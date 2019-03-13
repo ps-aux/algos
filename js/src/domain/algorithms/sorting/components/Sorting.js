@@ -10,51 +10,50 @@ import ButtonPanel from 'src/components/basic/ButtonPanel'
 
 const maxVal = reduce(max, 9)
 
-const data = shuffle(List(
-    range(0, 100).map(multiply(3))
-))
+const data = shuffle(List(range(0, 100).map(multiply(3))))
 
 const height = maxVal(data)
 
-const sortActions = Object.entries(sorts)
-    .map(([k, v]) => ({
-        label: k,
-        sort: v
-    }))
+const sortActions = Object.entries(sorts).map(([k, v]) => ({
+    label: k,
+    sort: v
+}))
 
 class Sorting extends React.Component {
-
     state = {
         sorting: false,
         items: data
     }
 
-    onSort = ({sort}) => {
-        this.setState({sorting: true})
+    onSort = ({ sort }) => {
+        this.setState({ sorting: true })
         play({
             ...sort(data.clone()),
             tempo: 1
         }).subscribe({
-            next: items => this.setState({items}),
-            complete: () => this.setState({sorting: false})
+            next: items => this.setState({ items }),
+            complete: () => this.setState({ sorting: false })
         })
-
     }
 
     render = () => {
-        const {sorting, items} = this.state
-        return <View>
-            <ButtonPanel actions={sortActions}
-                         enabled={!sorting}
-                         onClick={this.onSort}/>
-            <ListView items={items}
-                      height={height}
-                      width={15 * data.length}
-                      itemWidth={10}/>
-        </View>
+        const { sorting, items } = this.state
+        return (
+            <View>
+                <ButtonPanel
+                    actions={sortActions}
+                    enabled={!sorting}
+                    onClick={this.onSort}
+                />
+                <ListView
+                    items={items}
+                    height={height}
+                    width={15 * data.length}
+                    itemWidth={10}
+                />
+            </View>
+        )
     }
-
 }
 
 export default Sorting
-

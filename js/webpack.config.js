@@ -23,7 +23,8 @@ const config = {
             {
                 test: /\.sass$/,
                 exclude: [/node_modules/, /\.global.sass$/],
-                loaders: ['style-loader',
+                loaders: [
+                    'style-loader',
                     {
                         loader: 'css-loader',
                         options: {
@@ -35,17 +36,21 @@ const config = {
                         options: {
                             data: '@import "src/style/imports"'
                         }
-                    }]
+                    }
+                ]
             },
             {
                 test: /\.global.sass$/,
-                loaders: ['style-loader', 'css-loader',
+                loaders: [
+                    'style-loader',
+                    'css-loader',
                     {
                         loader: 'sass-loader',
                         options: {
                             data: '@import "src/style/imports"'
                         }
-                    }]
+                    }
+                ]
             },
             {
                 test: /\.css$/,

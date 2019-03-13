@@ -1,5 +1,4 @@
 export const countingSort = input => {
-
     /**
      * Example input [4,1,1,2]
      */
@@ -70,15 +69,13 @@ export const alternativeCountingSort = input => {
      */
     const res = []
     counts.forEach((c, i) => {
-        if (!c)
-            return
+        if (!c) return
 
         // Push for each
-        for (let j = 0; j < c ; j++) {
+        for (let j = 0; j < c; j++) {
             res.push(i)
         }
     })
-
 
     return res
 }

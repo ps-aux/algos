@@ -5,8 +5,7 @@ export const bubbleSort = list => {
         // invariant: subarray <i, array.length) is sorted
         let j = 0
         while (j < i) {
-            if (list[j] > list[j + 1])
-                list.swap(j, j + 1)
+            if (list[j] > list[j + 1]) list.swap(j, j + 1)
             j++
         }
     }

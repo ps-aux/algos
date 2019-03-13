@@ -1,14 +1,11 @@
 import create from './bst'
-import {random} from 'faker'
-import {add, range, take} from 'ramda'
+import { random } from 'faker'
+import { add, range, take } from 'ramda'
 
-const randomArray = (size = 10) =>
-    range(0, size)
-        .map(() => random.number(100))
+const randomArray = (size = 10) => range(0, size).map(() => random.number(100))
 
 const createFilled = (size = 20) =>
-    randomArray(size)
-        .reduce((a, v) => a.add(v), create())
+    randomArray(size).reduce((a, v) => a.add(v), create())
 
 describe('bst', () => {
     it('size()', () => {
@@ -17,7 +14,6 @@ describe('bst', () => {
             .add(4)
 
         expect(bst.size()).toBe(2)
-
     })
 
     it('add()', () => {
@@ -27,22 +23,18 @@ describe('bst', () => {
         bst = bst.add(3)
 
         expect(bst.find(3).value).toBe(3)
-
     })
 
     it('find() existing value', () => {
-        const bst = createFilled()
-            .add(4)
+        const bst = createFilled().add(4)
 
         expect(bst.find(4).value).toBe(4)
-
     })
 
     it('find() missing value', () => {
         const bst = createFilled()
 
         expect(bst.find(-1897489758759)).toBe(undefined)
-
     })
 
     it('visit()', () => {
@@ -54,14 +46,12 @@ describe('bst', () => {
 
         bst.visit(visit)
 
-        const {calls} = visit.mock
+        const { calls } = visit.mock
         expect(calls.length).toBe(3)
 
-        expect(calls[0][0]).toMatchObject({value: 2})
-        expect(calls[1][0]).toMatchObject({value: 1})
-        expect(calls[2][0]).toMatchObject({value: 3})
-
-
+        expect(calls[0][0]).toMatchObject({ value: 2 })
+        expect(calls[1][0]).toMatchObject({ value: 1 })
+        expect(calls[2][0]).toMatchObject({ value: 3 })
     })
 
     it('reduce()', () => {
@@ -71,6 +61,5 @@ describe('bst', () => {
             .add(8)
 
         expect(bst.reduce((a, n) => a + n.value, 100)).toBe(114)
-
     })
 })

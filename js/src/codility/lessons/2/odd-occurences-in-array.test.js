@@ -1,12 +1,12 @@
-function solution (A) {
-  let res = 0
-  A.forEach(n => {
-    res = res ^ n
-  })
+function solution(A) {
+    let res = 0
+    A.forEach(n => {
+        res = res ^ n
+    })
 
-  return res
+    return res
 }
 
 it('test', () => {
-  expect(solution([9, 3, 9, 3, 9, 7, 9])).toEqual(7)
+    expect(solution([9, 3, 9, 3, 9, 7, 9])).toEqual(7)
 })
