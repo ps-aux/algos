@@ -8,14 +8,14 @@ const Processor = () => {
         },
         getRankOfNumber: (n: number) => {
             for (let i = 0; i < arr.length; i++) {
-                if (arr[i] > n) return i
+                if (arr[i] > n) return i - 1
             }
             return -1
         }
     }
 }
 
-describe('test', () => {
+it('test', () => {
     const p = Processor()
     ;[5, 1, 4, 4, 5, 9, 7, 13, 3].forEach(p.track)
 
