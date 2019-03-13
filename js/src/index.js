@@ -11,7 +11,7 @@ const rootEl = window.document.getElementById('root')
 
 ReactDOM.render(
     <BrowserRouter>
-        <App/>
-    </BrowserRouter>, rootEl)
-
-
+        <App />
+    </BrowserRouter>,
+    rootEl
+)

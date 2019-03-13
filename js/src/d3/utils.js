@@ -1,1 +1,1 @@
-export const translate = ({x, y}) => `translate(${x}, ${y})`
+export const translate = ({ x, y }) => `translate(${x}, ${y})`

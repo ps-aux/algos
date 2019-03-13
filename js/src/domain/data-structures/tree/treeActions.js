@@ -1,4 +1,4 @@
-const actionCreator = type => (data, opts = {}) => ({type, data, ...opts})
+const actionCreator = type => (data, opts = {}) => ({ type, data, ...opts })
 
 export const RENDER = 'redraw'
 
@@ -15,5 +15,3 @@ export const select = actionCreator(SELECT)
 export const clearSelection = actionCreator(CLEAR_SELECTION)
 
 export const switchNodes = actionCreator(SWITCH)
-
-

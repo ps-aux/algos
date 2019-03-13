@@ -1,10 +1,8 @@
 export const selectionSort = list => {
-
     for (let i = 0; i < list.length; i++) {
         // invariant: subarray <0, i) is sorted and contains min elements
         const minIndex = findMin(i, list.length - 1)
-        if (minIndex !== i)
-            list.swap(i, minIndex)
+        if (minIndex !== i) list.swap(i, minIndex)
     }
 
     function findMin(l, h) {

@@ -1,7 +1,6 @@
-import {List} from 'src/domain/data-structures/list'
+import { List } from 'src/domain/data-structures/list'
 
 describe('list', () => {
-
     it('toArray()', () => {
         const l = List([1, 2, 3])
         expect(l.toArray()).toEqual([1, 2, 3])
@@ -17,5 +16,4 @@ describe('list', () => {
         const l = List([1, 2, 3])
         expect(l.clone().toArray()).toEqual([1, 2, 3])
     })
-
 })

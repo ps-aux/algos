@@ -14,24 +14,19 @@ const anagaramId = w => {
     for (let i = alphabetStart; i < +alphabetEnd; i++) {
         const count = counts[i]
 
-        for (let j = 0; j < count; j++)
-            res.push(String.fromCharCode(i))
-
+        for (let j = 0; j < count; j++) res.push(String.fromCharCode(i))
     }
 
     return res.join(',')
 }
 
 it('anagramId', () => {
-
     expect(anagaramId('aab')).toBe(anagaramId('baa'))
     expect(anagaramId('c')).toBe(anagaramId('c'))
     expect(anagaramId('abc')).not.toBe(anagaramId('abe'))
-
 })
 
 const groupAnagrams = arr => {
-
     const map = {}
 
     // Put to buckets
@@ -43,17 +38,12 @@ const groupAnagrams = arr => {
 
     const res = []
     // flatten
-    Object.values(map).forEach(b =>
-        b.forEach(
-            w => res.push(w)))
+    Object.values(map).forEach(b => b.forEach(w => res.push(w)))
 
     return res
-
 }
 
-const test = (arr) => {
-
-}
+const test = arr => {}
 
 describe('test', () => {
     it('case 1', () => {
@@ -61,4 +51,3 @@ describe('test', () => {
         console.log(res)
     })
 })
-

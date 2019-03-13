@@ -4,7 +4,6 @@ const swap = (array, a, b) => {
     array[a] = tmp
 }
 
-
 export const List = (data = []) => {
     data = data.slice()
     const steps = []
@@ -22,7 +21,6 @@ export const List = (data = []) => {
 
     data.clone = () => List(data.toArray())
 
-
     return new Proxy(data, {
         get: (o, a) => {
             // Swap is standalone primitive operation for us
@@ -33,7 +31,4 @@ export const List = (data = []) => {
             return r
         }
     })
-
 }
-
-
