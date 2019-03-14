@@ -57,9 +57,30 @@ const add = (node: TreeNode, val: number) => {
     }
 }
 
+const toArray = (node: TreeNode, acc: number[] = []) => {
+    const left = node.children[0]
+    const right = node.children[1]
+
+    if (left)
+        toArray(left, acc)
+    acc.push(node.val)
+    if (right)
+        toArray(right, acc)
+
+    return acc
+}
+
 it('bst', () => {
     const t = createNode(2)
     add(t, 4)
-    console.log(t)
+    add(t, 5)
+    add(t, 100)
+    add(t, 58)
+    add(t, 288)
+    add(t, 1)
+
+    const a = toArray(t)
+
+    console.log('arr', a)
 
 })
