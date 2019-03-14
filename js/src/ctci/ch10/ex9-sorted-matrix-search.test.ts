@@ -1,7 +1,7 @@
 const search = (
     mtx: number[][],
     y: number, x: number,
-    val: number): number[] => {
+    val: number): number[] | null => {
 
     const mSize = mtx.length
     const nSize = mtx[0].length
