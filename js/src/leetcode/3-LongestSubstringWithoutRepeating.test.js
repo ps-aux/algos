@@ -1,36 +1,22 @@
 const go = (str) => {
 
-    let current = 0
     let longest = 0
-    let map = new Map()
+    let start = 0
+    let map = []
 
     for (let i = 0; i < str.length; i++) {
-        const c = str[i]
+        const code = str.charCodeAt(i)
+        const previousDuplicatePosition = map[code]
 
-        if (map.has(c)) {
-
-            // Finalize old
-            if (current > longest)
-                longest = current
-
-            const previousDuplicatePosition = map.get(c)
-
-            // Reset
-            map = new Map()
-            // The initial state take into consideration distance from the duplicate
-            // as it contains unique chars
-            current = i - previousDuplicatePosition - 1
-
-            for (let j = previousDuplicatePosition + 1; j < i; j++) {
-                // Add previous to the map
-                map.set(str[j], j)
-            }
+        // Ignore duplicates before start
+        if (previousDuplicatePosition >= start) {
+            start = previousDuplicatePosition + 1
         }
-        current++
-        map.set(c, i)
+        map[code] = i
+
+        if (i - start + 1 > longest)
+            longest = i - start + 1
     }
-    if (current > longest)
-        longest = current
 
     return longest
 }
