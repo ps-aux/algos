@@ -5,7 +5,7 @@
     "scripts": {
         "start": "webpack-dev-server  --mode development --open",
         "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
-        "test": "jest --watchAll",
+        "test": "jest --watch",
         "test:one": "jest -t bst",
         "build": "webpack",
         "deploy": "npm run build && firebase deploy --only hosting",

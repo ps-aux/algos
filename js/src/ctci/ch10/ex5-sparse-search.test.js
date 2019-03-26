@@ -1,4 +1,3 @@
-import { always, range } from 'ramda'
 
 const search = (arr, val, start = 0, end = arr.length) => {
     // singleton

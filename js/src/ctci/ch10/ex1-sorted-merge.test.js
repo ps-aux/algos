@@ -1,3 +1,6 @@
+
+
+
 const naive = (A, B) => {
     const tmp = []
     let ai = 0
@@ -21,7 +24,7 @@ const naive = (A, B) => {
 }
 
 it('naive', () => {
-    const r = merge([1, 6, 10], [2, 3, 8])
+    const r = naive([1, 6, 10], [2, 3, 8])
     expect(r).toMatchObject([1, 2, 3, 6, 8, 10])
 })
 

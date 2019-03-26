@@ -30,7 +30,6 @@ const go = (a, b) => {
         bDone = bIdx >= b.length
     }
 
-    console.log(merged)
     if (merged.length % 2 === 1) {
         return merged[Math.floor(merged.length / 2)]
     }
@@ -47,10 +46,7 @@ const t = (arr1, arr2, b) =>
 
 describe('tests', () => {
 
-    it('ee', () => {
-
-        // console.log(go([1, 2, 10], [2, 4, 7, 8]))
-    })
+    // TODO the solution should be in log time not in linear time
     t([1, 2], [3], 2)
     t([1, 2], [3, 4], 2.5)
 })

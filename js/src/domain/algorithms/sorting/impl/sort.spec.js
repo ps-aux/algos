@@ -1,8 +1,7 @@
-import { random } from 'faker'
-import { mergeSort, sorts } from 'src/domain/algorithms/sorting/impl/index'
 import { subtract } from 'ramda'
 import { List } from 'src/domain/data-structures/list'
-import { randomArray } from 'src/domain/algorithms/sorting/impl/dataGen'
+import { randomArray } from 'src/domain/algorithms/sorting/data/dataGen'
+import { sorts } from 'src/domain/algorithms/sorting/impl/index'
 
 const testSort = (sort, arr) => {
     const expected = arr.slice()
